@@ -1,0 +1,228 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ReservationSwitcher from '../components/ReservationSwitcher.astro';
+import bookingHero from '../assets/images/fly-evenement-4.jpeg';
+import { breadcrumbSchema } from '../data/seo';
+import { SITE } from '../data/site';
+
+const entry = await getEntry('pages', 'reserver');
+if (!entry) throw new Error('Le contenu Réserver est introuvable.');
+const { data } = entry;
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Accueil', path: '/' },
+    { name: 'Réserver', path: '/reserver' },
+  ]),
+];
+---
+
+<BaseLayout title={data.title} description={data.description} {schemas}>
+  <PageHero
+    eyebrow={data.eyebrow}
+    title={data.headline}
+    intro={data.intro}
+    image={bookingHero}
+    alt="Séance collective Gao Mata dans les hamacs"
+    tone="sienna"
+  >
+    <a class="button button--light" href={data.ctaHref}>
+      {data.ctaLabel}
+      <span class="button__icon" aria-hidden="true">
+        ↓
+      </span>
+    </a>
+  </PageHero>
+
+  <section class="section booking-choice" id="choisir">
+    <div class="container">
+      <div class="choice-heading reveal">
+        <span class="eyebrow">Réserver en ligne</span>
+        <h2>{data.sections.choiceTitle}</h2>
+      </div>
+
+      <ReservationSwitcher
+        collectiveUrl={SITE.collectiveEmbed}
+        sophrologyUrl={SITE.sophrologyEmbed}
+        profileUrl={SITE.bookingProfile}
+      />
+    </div>
+  </section>
+
+  <section class="section first-appointment">
+    <div class="narrow first-card reveal">
+      <span class="first-index">01</span>
+      <div>
+        <span class="eyebrow">Sophrologie</span>
+        <h2>{data.sections.firstAppointmentTitle}</h2>
+        <p>{data.sections.firstAppointmentText}</p>
+        <a
+          class="button"
+          href={`mailto:${SITE.email}?subject=Première%20séance%20de%20sophrologie`}
+        >
+          Écrire à Marion
+          <span class="button__icon" aria-hidden="true">
+            ↗
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section contact-band">
+    <div class="container contact-grid">
+      <div class="reveal">
+        <span class="eyebrow">Besoin d’être guidé·e ?</span>
+        <h2>{data.sections.helpTitle}</h2>
+      </div>
+      <div class="contact-links reveal reveal-delay-1">
+        <a href={`mailto:${SITE.email}`}>
+          <span>Email</span>
+          <strong>{SITE.email}</strong>
+          <i aria-hidden="true">↗</i>
+        </a>
+        <a href={SITE.phoneHref}>
+          <span>Téléphone</span>
+          <strong>{SITE.phoneDisplay}</strong>
+          <i aria-hidden="true">↗</i>
+        </a>
+        <a href={SITE.bookingProfile} target="_blank" rel="noreferrer">
+          <span>Réservation externe</span>
+          <strong>Profil Aurarios</strong>
+          <i aria-hidden="true">↗</i>
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .choice-heading {
+    display: grid;
+    align-items: end;
+    margin-bottom: 4rem;
+    gap: 2rem;
+    grid-template-columns: 0.4fr 1fr;
+  }
+
+  .choice-heading h2 {
+    max-width: 11ch;
+    margin: 0;
+  }
+
+  .first-appointment {
+    background: var(--cream-deep);
+  }
+
+  .first-card {
+    display: grid;
+    padding: clamp(2rem, 6vw, 5rem);
+    border-radius: var(--radius-lg);
+    background: var(--paper);
+    box-shadow: var(--shadow-soft);
+    gap: clamp(2rem, 6vw, 6rem);
+    grid-template-columns: auto 1fr;
+  }
+
+  .first-index {
+    display: grid;
+    width: 5rem;
+    height: 5rem;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--clay);
+    color: var(--ink);
+    font-size: 0.72rem;
+    font-weight: 850;
+  }
+
+  .first-card h2 {
+    max-width: 11ch;
+  }
+
+  .first-card p {
+    max-width: 42rem;
+    margin-bottom: 2rem;
+    color: var(--muted);
+  }
+
+  .contact-band {
+    background: var(--harbor);
+    color: var(--white);
+  }
+
+  .contact-grid {
+    display: grid;
+    align-items: start;
+    gap: clamp(3rem, 8vw, 9rem);
+    grid-template-columns: 0.8fr 1.2fr;
+  }
+
+  .contact-grid h2 {
+    max-width: 8ch;
+  }
+
+  .contact-links {
+    display: grid;
+  }
+
+  .contact-links a {
+    display: grid;
+    align-items: center;
+    padding: 1.4rem 0;
+    border-top: 1px solid rgb(255 255 255 / 14%);
+    color: var(--white);
+    gap: 1rem;
+    grid-template-columns: 8rem 1fr auto;
+    text-decoration: none;
+  }
+
+  .contact-links span {
+    color: var(--clay);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .contact-links strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    font-weight: 540;
+  }
+
+  .contact-links i {
+    display: grid;
+    width: 2.8rem;
+    height: 2.8rem;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 20%);
+    border-radius: 50%;
+    font-style: normal;
+    transition: transform 400ms var(--ease-out);
+  }
+
+  .contact-links a:hover i {
+    transform: translate(0.15rem, -0.15rem);
+  }
+
+  @media (max-width: 52rem) {
+    .choice-heading,
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .first-card {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-links a {
+      grid-template-columns: 1fr auto;
+    }
+
+    .contact-links span {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

@@ -1,0 +1,260 @@
+---
+interface Props {
+  collectiveUrl: string;
+  sophrologyUrl: string;
+  profileUrl: string;
+}
+
+const { collectiveUrl, sophrologyUrl, profileUrl } = Astro.props;
+---
+
+<section
+  class="switcher"
+  data-reservation-switcher
+  data-collective-url={collectiveUrl}
+  data-sophrology-url={sophrologyUrl}
+  data-origin={new URL(collectiveUrl).origin}
+>
+  <div class="switcher__buttons" role="group" aria-label="Type de réservation">
+    <button type="button" data-booking-choice="collectif">
+      <span>01</span>
+      <strong>Cours collectifs</strong>
+      <small>Fly Yoga · Souplesse · Ateliers</small>
+      <i aria-hidden="true">↓</i>
+    </button>
+    <button type="button" data-booking-choice="sophrologie">
+      <span>02</span>
+      <strong>Sophrologie</strong>
+      <small>Adultes · Enfants · Neuroatypie</small>
+      <i aria-hidden="true">↓</i>
+    </button>
+  </div>
+
+  <div class="switcher__frame" data-switcher-frame hidden>
+    <div class="switcher__status" data-switcher-status aria-live="polite">
+      Chargement du module Aurarios…
+    </div>
+    <iframe
+      title="Réservation Gao Mata avec Aurarios"
+      data-switcher-iframe
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin"
+    ></iframe>
+  </div>
+
+  <p class="switcher__fallback">
+    Le module ne s’affiche pas ?
+    <a href={profileUrl} target="_blank" rel="noreferrer">
+      Ouvrir le profil Aurarios
+    </a>
+  </p>
+</section>
+
+<script>
+  const switcher = document.querySelector<HTMLElement>(
+    '[data-reservation-switcher]',
+  );
+  const choices = switcher?.querySelectorAll<HTMLButtonElement>(
+    '[data-booking-choice]',
+  );
+  const frame = switcher?.querySelector<HTMLElement>('[data-switcher-frame]');
+  const iframe = switcher?.querySelector<HTMLIFrameElement>(
+    '[data-switcher-iframe]',
+  );
+  const status = switcher?.querySelector<HTMLElement>('[data-switcher-status]');
+
+  const selectBooking = (choice: 'collectif' | 'sophrologie') => {
+    if (!switcher || !frame || !iframe || !choices) return;
+    const url =
+      choice === 'collectif'
+        ? switcher.dataset.collectiveUrl
+        : switcher.dataset.sophrologyUrl;
+    if (!url) return;
+
+    choices.forEach((button) => {
+      const selected = button.dataset.bookingChoice === choice;
+      button.classList.toggle('is-active', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+
+    frame.hidden = false;
+    status?.removeAttribute('hidden');
+    iframe.src = url;
+    history.replaceState(null, '', `#${choice}`);
+    frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  choices?.forEach((button) => {
+    button.addEventListener('click', () => {
+      const choice = button.dataset.bookingChoice;
+      if (choice === 'collectif' || choice === 'sophrologie') {
+        selectBooking(choice);
+      }
+    });
+  });
+
+  iframe?.addEventListener('load', () => status?.setAttribute('hidden', ''));
+
+  window.addEventListener('message', (event) => {
+    if (
+      event.origin !== switcher?.dataset.origin ||
+      event.source !== iframe?.contentWindow ||
+      typeof event.data !== 'object' ||
+      event.data === null ||
+      event.data.type !== 'aurarios-embed-resize'
+    ) {
+      return;
+    }
+
+    const requestedHeight = Number(event.data.height);
+    if (!Number.isFinite(requestedHeight) || !iframe) return;
+    iframe.style.height = `${Math.min(Math.max(requestedHeight, 620), 1800)}px`;
+  });
+
+  const initialChoice = window.location.hash.replace('#', '');
+  if (initialChoice === 'collectif' || initialChoice === 'sophrologie') {
+    selectBooking(initialChoice);
+  }
+</script>
+
+<style>
+  .switcher__buttons {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .switcher__buttons button {
+    position: relative;
+    display: grid;
+    min-height: 18rem;
+    align-content: end;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: var(--cream-deep);
+    color: var(--harbor);
+    cursor: pointer;
+    text-align: left;
+    transition:
+      color 500ms var(--ease-out),
+      background-color 500ms var(--ease-out),
+      transform 500ms var(--ease-out);
+  }
+
+  .switcher__buttons button:last-child {
+    background: var(--olive);
+    color: var(--white);
+  }
+
+  .switcher__buttons button:hover {
+    transform: translateY(-0.3rem);
+  }
+
+  .switcher__buttons button:first-child.is-active {
+    background: var(--amber-deep);
+    color: var(--white);
+  }
+
+  .switcher__buttons button:last-child.is-active {
+    background: var(--harbor);
+  }
+
+  .switcher__buttons span {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    font-size: 0.62rem;
+    font-weight: 850;
+  }
+
+  .switcher__buttons strong,
+  .switcher__buttons small {
+    display: block;
+  }
+
+  .switcher__buttons strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+    font-weight: 560;
+    letter-spacing: -0.045em;
+    line-height: 0.95;
+  }
+
+  .switcher__buttons small {
+    margin-top: 1rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .switcher__buttons i {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    display: grid;
+    width: 3rem;
+    height: 3rem;
+    place-items: center;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-style: normal;
+  }
+
+  .switcher__frame {
+    position: relative;
+    min-height: 42rem;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: var(--radius-lg);
+    background: var(--paper);
+    box-shadow: var(--shadow-soft);
+    scroll-margin-top: 7rem;
+  }
+
+  .switcher__frame iframe {
+    display: block;
+    width: 100%;
+    min-height: 42rem;
+    border: 0;
+    border-radius: calc(var(--radius-lg) - 0.5rem);
+    background: var(--white);
+  }
+
+  .switcher__status {
+    position: absolute;
+    inset: 0.75rem;
+    display: grid;
+    place-items: center;
+    border-radius: calc(var(--radius-lg) - 0.5rem);
+    background: var(--paper);
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+
+  .switcher__status[hidden] {
+    display: none;
+  }
+
+  .switcher__fallback {
+    margin: 1rem 0 0;
+    color: var(--muted);
+    font-size: 0.72rem;
+    text-align: center;
+  }
+
+  .switcher__fallback a {
+    color: var(--walnut);
+    font-weight: 750;
+  }
+
+  @media (max-width: 45rem) {
+    .switcher__buttons {
+      grid-template-columns: 1fr;
+    }
+
+    .switcher__buttons button {
+      min-height: 15rem;
+    }
+  }
+</style>

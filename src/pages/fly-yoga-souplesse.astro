@@ -1,0 +1,516 @@
+---
+import { Image } from 'astro:assets';
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BookingEmbed from '../components/BookingEmbed.astro';
+import PageHero from '../components/PageHero.astro';
+import PricingList from '../components/PricingList.astro';
+import flyHero from '../assets/images/fly-2.jpeg';
+import flyKids from '../assets/images/fly-kids.jpeg';
+import flexibility from '../assets/images/souplesse-1.jpeg';
+import { breadcrumbSchema, serviceSchema } from '../data/seo';
+import { COLLECTIVE_PRICES, FLY_FORMATS, SITE } from '../data/site';
+
+const entry = await getEntry('pages', 'fly-yoga-souplesse');
+if (!entry) throw new Error('Le contenu Fly Yoga est introuvable.');
+const { data } = entry;
+const schemas = [
+  serviceSchema(
+    'Fly Yoga et souplesse',
+    data.description,
+    '/fly-yoga-souplesse',
+    'Cours de yoga aérien et de souplesse',
+  ),
+  breadcrumbSchema([
+    { name: 'Accueil', path: '/' },
+    { name: 'Fly Yoga et Souplesse', path: '/fly-yoga-souplesse' },
+  ]),
+];
+---
+
+<BaseLayout title={data.title} description={data.description} {schemas}>
+  <PageHero
+    eyebrow={data.eyebrow}
+    title={data.headline}
+    intro={data.intro}
+    image={flyHero}
+    alt="Pratique de Fly Yoga dans un hamac aérien"
+    tone="amber"
+  >
+    <a class="button button--light" href={data.ctaHref}>
+      {data.ctaLabel}
+      <span class="button__icon" aria-hidden="true">
+        ↗
+      </span>
+    </a>
+  </PageHero>
+
+  <section class="section fly-intro">
+    <div class="container intro-grid">
+      <div class="reveal">
+        <span class="eyebrow">La pratique aérienne</span>
+        <h2>{data.sections.flyTitle}</h2>
+      </div>
+      <div class="intro-text reveal reveal-delay-1">
+        <p class="lead">{data.sections.flyText}</p>
+        <div class="intro-detail">
+          <span>Avant de s’envoler</span>
+          <p>
+            Tu prendras toujours le temps de bouger d’abord sans le hamac, pour
+            réveiller, parfois renforcer le corps, avant de t’envoler
+            progressivement.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section formats" aria-labelledby="formats-title">
+    <div class="container">
+      <div class="formats-heading reveal">
+        <span class="eyebrow">Six façons d’explorer</span>
+        <h2 id="formats-title">{data.sections.formatsTitle}</h2>
+      </div>
+      <div class="formats-grid">
+        {FLY_FORMATS.map((format, index) => (
+          <article class={`format-card reveal reveal-delay-${(index % 3) + 1}`}>
+            <span class="format-index">0{index + 1}</span>
+            <span class="pill">{format.marker}</span>
+            <div>
+              <h3>{format.name}</h3>
+              <p>{format.text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section flexibility">
+    <div class="container flexibility-grid">
+      <div class="flexibility-media reveal">
+        <Image
+          src={flexibility}
+          alt="Travail accompagné de souplesse dans un studio lumineux"
+          widths={[520, 780, 1040]}
+          sizes="(max-width: 832px) 100vw, 48vw"
+          quality={86}
+        />
+        <span>Souplesse active + passive</span>
+      </div>
+      <div class="flexibility-copy reveal reveal-delay-1">
+        <span class="eyebrow">Explorer ses amplitudes</span>
+        <h2>{data.sections.flexibilityTitle}</h2>
+        <p class="lead">{data.sections.flexibilityText}</p>
+        <div class="flexibility-list">
+          <span>Aucun niveau requis</span>
+          <span>Chers amis hypermobiles, bienvenus</span>
+          <span>Méthode Sophie Lanka</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section safety">
+    <div class="container safety-grid">
+      <div class="safety-copy reveal">
+        <span class="eyebrow">Le cadre</span>
+        <h2>{data.sections.safetyTitle}</h2>
+        <p>{data.sections.safetyText}</p>
+        <a class="button" href="#planning">
+          Voir les cours
+          <span class="button__icon" aria-hidden="true">
+            ↗
+          </span>
+        </a>
+      </div>
+      <div class="safety-media reveal reveal-delay-1">
+        <Image
+          src={flyKids}
+          alt="Une jeune participante explore le hamac pendant un cours Fly Kids"
+          widths={[480, 720]}
+          sizes="(max-width: 832px) 100vw, 40vw"
+          quality={85}
+        />
+        <div class="safety-badge">
+          <strong>8</strong>
+          <span>personnes maximum en cours Fly</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section prices" aria-labelledby="prices-title">
+    <div class="container">
+      <div class="prices-heading reveal">
+        <span class="eyebrow">Des formules souples</span>
+        <h2 id="prices-title">{data.sections.pricesTitle}</h2>
+      </div>
+      <div class="prices-grid">
+        <PricingList
+          title="Cours collectifs Fly"
+          items={COLLECTIVE_PRICES.fly.map((item) => ({ ...item }))}
+          note="Sur réservation · 8 personnes maximum"
+        />
+        <PricingList
+          title="Souplesse & cours particuliers"
+          items={COLLECTIVE_PRICES.flexibility.map((item) => ({ ...item }))}
+          note="Pratique collective ou accompagnement personnalisé"
+          tone="cream"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section collective-booking" id="planning">
+    <div class="container reveal">
+      <BookingEmbed
+        id="planning-collectif"
+        title="Le planning des cours"
+        description="Choisis directement ton cours de Fly Yoga, de souplesse ou ton prochain atelier."
+        embedUrl={SITE.collectiveEmbed}
+        profileUrl={SITE.bookingProfile}
+        buttonLabel="Afficher le planning"
+        tone="amber"
+        autoLoad
+        compact
+      />
+    </div>
+  </section>
+
+  <section class="section faq">
+    <div class="narrow">
+      <div class="faq-heading reveal">
+        <span class="eyebrow">Avant de venir</span>
+        <h2>Les questions les plus fréquentes.</h2>
+      </div>
+      <div class="faq-list">
+        {data.faqs.map((faq, index) => (
+          <details class="reveal">
+            <summary>
+              <span>0{index + 1}</span>
+              {faq.question}
+            </summary>
+            <p>{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro-grid {
+    display: grid;
+    align-items: start;
+    gap: clamp(3rem, 8vw, 9rem);
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  .intro-grid h2 {
+    max-width: 10ch;
+  }
+
+  .intro-detail {
+    display: grid;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgb(75 46 32 / 18%);
+    gap: 1rem;
+    grid-template-columns: 8rem 1fr;
+  }
+
+  .intro-detail span {
+    color: var(--walnut);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .intro-detail p {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .formats {
+    background: var(--harbor);
+    color: var(--white);
+  }
+
+  .formats-heading {
+    display: grid;
+    align-items: end;
+    margin-bottom: 5rem;
+    gap: 2rem;
+    grid-template-columns: 0.45fr 1fr;
+  }
+
+  .formats-heading h2 {
+    max-width: 12ch;
+    margin: 0;
+  }
+
+  .formats-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  .format-card {
+    position: relative;
+    display: grid;
+    min-height: 22rem;
+    align-content: space-between;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border-top: 1px solid rgb(255 255 255 / 15%);
+    border-right: 1px solid rgb(255 255 255 / 15%);
+    grid-column: span 4;
+  }
+
+  .format-card:nth-child(4),
+  .format-card:nth-child(5),
+  .format-card:nth-child(6) {
+    grid-column: span 4;
+  }
+
+  .format-card:nth-child(3n) {
+    border-right: 0;
+  }
+
+  .format-card .pill {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgb(255 255 255 / 10%);
+    color: var(--white);
+  }
+
+  .format-index {
+    color: var(--clay);
+    font-size: 0.62rem;
+    font-weight: 800;
+  }
+
+  .format-card h3 {
+    margin-bottom: 1rem;
+  }
+
+  .format-card p {
+    margin-bottom: 0;
+    color: rgb(255 255 255 / 65%);
+  }
+
+  .flexibility {
+    background: var(--cream-deep);
+  }
+
+  .flexibility-grid {
+    display: grid;
+    align-items: center;
+    gap: clamp(3rem, 8vw, 8rem);
+    grid-template-columns: 1fr 0.85fr;
+  }
+
+  .flexibility-media {
+    position: relative;
+    min-height: 43rem;
+    overflow: hidden;
+    border-radius: 1.15rem;
+  }
+
+  .flexibility-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .flexibility-media > span {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-pill);
+    background: var(--cream);
+    color: var(--walnut);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .flexibility-copy h2 {
+    max-width: 9ch;
+  }
+
+  .flexibility-list {
+    display: grid;
+    margin-top: 2.5rem;
+  }
+
+  .flexibility-list span {
+    padding: 1rem 0;
+    border-top: 1px solid rgb(75 46 32 / 14%);
+    font-size: 0.82rem;
+    font-weight: 720;
+  }
+
+  .safety-grid {
+    display: grid;
+    align-items: center;
+    gap: clamp(3rem, 8vw, 8rem);
+    grid-template-columns: 0.8fr 1.2fr;
+  }
+
+  .safety-copy {
+    padding-left: clamp(0rem, 5vw, 5rem);
+  }
+
+  .safety-copy h2 {
+    max-width: 8ch;
+  }
+
+  .safety-copy p {
+    margin-bottom: 2rem;
+    color: var(--muted);
+  }
+
+  .safety-media {
+    position: relative;
+    min-height: 38rem;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--olive);
+  }
+
+  .safety-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .safety-badge {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    display: grid;
+    width: 11rem;
+    min-height: 11rem;
+    align-content: center;
+    padding: 1.3rem;
+    border-radius: 50%;
+    background: var(--clay);
+    color: var(--ink);
+    text-align: center;
+  }
+
+  .safety-badge strong {
+    font-family: var(--font-display);
+    font-size: 4rem;
+    line-height: 0.9;
+  }
+
+  .safety-badge span {
+    margin-top: 0.5rem;
+    font-size: 0.64rem;
+    font-weight: 730;
+    line-height: 1.35;
+  }
+
+  .prices {
+    background: var(--sienna);
+    color: var(--white);
+  }
+
+  .prices-heading {
+    margin-bottom: 4rem;
+  }
+
+  .prices-heading h2 {
+    max-width: 10ch;
+  }
+
+  .prices-grid {
+    display: grid;
+    color: var(--ink);
+    gap: 1rem;
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  .collective-booking {
+    background: var(--cream-deep);
+  }
+
+  .faq-heading {
+    margin-bottom: 3rem;
+  }
+
+  .faq-heading h2 {
+    max-width: 11ch;
+  }
+
+  .faq-list {
+    border-top: 1px solid rgb(75 46 32 / 18%);
+  }
+
+  details {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgb(75 46 32 / 18%);
+  }
+
+  summary {
+    display: grid;
+    align-items: baseline;
+    color: var(--harbor);
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.4vw, 1.8rem);
+    font-weight: 580;
+    gap: 1rem;
+    grid-template-columns: 2rem 1fr;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary span {
+    color: var(--walnut);
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+  }
+
+  details p {
+    max-width: 42rem;
+    margin: 1rem 0 0 3rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 52rem) {
+    .intro-grid,
+    .formats-heading,
+    .flexibility-grid,
+    .safety-grid,
+    .prices-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .format-card,
+    .format-card:nth-child(4),
+    .format-card:nth-child(5),
+    .format-card:nth-child(6) {
+      min-height: 19rem;
+      border-right: 0;
+      grid-column: 1 / -1;
+    }
+
+    .flexibility-media,
+    .safety-media {
+      min-height: 32rem;
+    }
+
+    .safety-copy {
+      padding-left: 0;
+    }
+  }
+</style>

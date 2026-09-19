@@ -1,0 +1,217 @@
+---
+import { Image } from 'astro:assets';
+import logoWhite from '../assets/brand/logo-gaomata-blanc.png';
+import logoGreen from '../assets/brand/logo-gaomata-vert.png';
+import { SITE } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-cta reveal">
+      <Image
+        class="footer-cta__mark"
+        src={logoWhite}
+        alt=""
+        width={112}
+        height={112}
+        densities={[2]}
+        format="png"
+        quality={100}
+      />
+      <div>
+        <span class="eyebrow">Faire le premier pas</span>
+        <h2>Et si tu venais explorer&nbsp;?</h2>
+      </div>
+      <a class="button button--light" href="/reserver">
+        Choisir ma séance
+        <span class="button__icon" aria-hidden="true">
+          ↗
+        </span>
+      </a>
+    </div>
+
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a href="/" aria-label={`${SITE.name} — Accueil`}>
+          <Image
+            src={logoGreen}
+            alt=""
+            width={56}
+            height={56}
+            densities={[2, 3]}
+            format="png"
+            quality={100}
+          />
+          <span>{SITE.name}</span>
+        </a>
+        <p>
+          Une pédagogie peu conventionnelle, au service de l’atypique.
+        </p>
+      </div>
+
+      <div class="footer-group">
+        <strong>Explorer</strong>
+        <a href="/fly-yoga-souplesse">Fly Yoga & Souplesse</a>
+        <a href="/sophrologie-neuroatypie">Sophrologie</a>
+        <a href="/a-propos">À propos de Marion</a>
+        <a href="/reserver">Réserver</a>
+      </div>
+
+      <div class="footer-group">
+        <strong>Venir</strong>
+        <span>Boisseuil</span>
+        <span>Limoges</span>
+        <a href="tel:+33609050001">06 09 05 00 01</a>
+        <a href="mailto:gao.mata87@gmail.com">gao.mata87@gmail.com</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© {year} {SITE.name}</span>
+      <span>Yoga aérien · Souplesse · Sophrologie</span>
+      <a href="/mentions-legales">Mentions légales & confidentialité</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding: 0.6rem 0 1.5rem;
+    background: var(--cream);
+  }
+
+  .footer-cta {
+    position: relative;
+    display: grid;
+    min-height: 25rem;
+    align-items: end;
+    padding: clamp(2rem, 6vw, 5rem);
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(
+        circle at 78% 10%,
+        rgb(208 138 82 / 42%),
+        transparent 27%
+      ),
+      var(--sienna);
+    box-shadow: var(--shadow-deep);
+    color: var(--white);
+    gap: 2rem;
+    grid-template-columns: 1fr auto;
+  }
+
+  .footer-cta__mark {
+    position: absolute;
+    top: clamp(1.5rem, 4vw, 3rem);
+    right: clamp(1.5rem, 4vw, 3rem);
+    width: clamp(4.5rem, 9vw, 7rem);
+    height: auto;
+    opacity: 0.62;
+  }
+
+  .footer-cta h2 {
+    max-width: 12ch;
+    margin-bottom: 0;
+  }
+
+  .footer-main {
+    display: grid;
+    padding: clamp(4rem, 8vw, 7rem) 0;
+    border-bottom: 1px solid rgb(75 46 32 / 15%);
+    gap: 3rem;
+    grid-template-columns: 1.7fr 0.8fr 0.8fr;
+  }
+
+  .footer-brand > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--harbor);
+    font-family: var(--font-display);
+    font-size: clamp(2.3rem, 4vw, 4rem);
+    font-weight: 570;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .footer-brand > a :global(img) {
+    width: 3.2rem;
+    height: 3.2rem;
+    object-fit: contain;
+  }
+
+  .footer-brand p {
+    max-width: 30rem;
+    margin: 1.4rem 0 0;
+    color: var(--muted);
+  }
+
+  .footer-group {
+    display: grid;
+    align-content: start;
+    gap: 0.65rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .footer-group strong {
+    margin-bottom: 0.6rem;
+    color: var(--walnut);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .footer-group a {
+    width: fit-content;
+    text-decoration: none;
+  }
+
+  .footer-group a:hover {
+    color: var(--sienna);
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.7rem 2rem;
+    padding-top: 1.4rem;
+    color: var(--muted);
+    font-size: 0.64rem;
+    letter-spacing: 0.04em;
+  }
+
+  .footer-bottom a {
+    color: var(--walnut);
+  }
+
+  @media (max-width: 50rem) {
+    .footer-cta {
+      min-height: 30rem;
+      align-content: end;
+      grid-template-columns: 1fr;
+    }
+
+    .footer-cta .button {
+      width: fit-content;
+    }
+
+    .footer-main {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .footer-main {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

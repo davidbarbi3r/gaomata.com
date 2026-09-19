@@ -1,0 +1,87 @@
+---
+interface Props {
+  quote: string;
+  author: string;
+  index?: string;
+  tone?: 'cream' | 'clay' | 'harbor';
+  compact?: boolean;
+}
+
+const {
+  quote,
+  author,
+  index = '01',
+  tone = 'cream',
+  compact = false,
+} = Astro.props;
+---
+
+<figure
+  class:list={[
+    'testimonial',
+    `testimonial--${tone}`,
+    compact && 'testimonial--compact',
+    !compact && 'reveal',
+  ]}
+>
+  <span class="testimonial__index">{index}</span>
+  <blockquote>«&nbsp;{quote}&nbsp;»</blockquote>
+  <figcaption>{author}</figcaption>
+</figure>
+
+<style>
+  .testimonial {
+    display: grid;
+    min-height: 24rem;
+    align-content: space-between;
+    padding: clamp(1.7rem, 4vw, 3.2rem);
+    border-radius: var(--radius-lg);
+  }
+
+  .testimonial--cream {
+    background: var(--paper);
+    color: var(--walnut);
+  }
+
+  .testimonial--clay {
+    background: var(--clay);
+    color: var(--ink);
+  }
+
+  .testimonial--harbor {
+    background: var(--harbor);
+    color: var(--white);
+  }
+
+  .testimonial__index {
+    width: fit-content;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-pill);
+    font-size: 0.58rem;
+    font-weight: 780;
+    opacity: 1;
+  }
+
+  blockquote {
+    margin: 3rem 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 2.8vw, 2.2rem);
+    font-weight: 520;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+
+  figcaption {
+    font-size: 0.7rem;
+    font-weight: 780;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .testimonial--compact {
+    flex: 0 0 min(26rem, 82vw);
+    min-height: 18rem;
+    width: min(26rem, 82vw);
+  }
+</style>

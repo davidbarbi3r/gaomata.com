@@ -1,0 +1,443 @@
+---
+import { Image } from 'astro:assets';
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import portrait from '../assets/images/marion-portrait.jpeg';
+import duo from '../assets/images/marion-edwige.jpeg';
+import eventOne from '../assets/images/fly-evenement-1.jpeg';
+import eventTwo from '../assets/images/fly-evenement-3.jpeg';
+import { breadcrumbSchema } from '../data/seo';
+import { PARTNERSHIPS, SITE } from '../data/site';
+
+const entry = await getEntry('pages', 'a-propos');
+if (!entry) throw new Error('Le contenu À propos est introuvable.');
+const { data } = entry;
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: {
+      '@type': 'Person',
+      '@id': `${SITE.url}/a-propos#marion-aubreton`,
+      name: SITE.owner,
+      jobTitle: 'Fondatrice de Gao Mata',
+      worksFor: { '@id': `${SITE.url}/#business` },
+      knowsAbout: ['Fly Yoga', 'Souplesse', 'Sophrologie', 'Neuroatypie'],
+    },
+  },
+  breadcrumbSchema([
+    { name: 'Accueil', path: '/' },
+    { name: 'À propos', path: '/a-propos' },
+  ]),
+];
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  type="profile"
+  {schemas}
+>
+  <PageHero
+    eyebrow={data.eyebrow}
+    title={data.headline}
+    intro={data.intro}
+    image={portrait}
+    alt="Marion Aubreton sourit devant un mur bleu intense"
+    tone="harbor"
+  >
+    <a class="button button--light" href={data.ctaHref}>
+      {data.ctaLabel}
+      <span class="button__icon" aria-hidden="true">
+        ↗
+      </span>
+    </a>
+  </PageHero>
+
+  <section class="section story">
+    <div class="container story-grid">
+      <span class="story-year reveal">2013</span>
+      <div class="story-copy reveal reveal-delay-1">
+        <span class="eyebrow">Le point de départ</span>
+        <h2>{data.sections.storyTitle}</h2>
+        <p class="lead">{data.sections.storyText}</p>
+        <p>{data.sections.storyExtra}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section timeline">
+    <div class="container timeline-grid">
+      <div class="timeline-image reveal">
+        <Image
+          src={duo}
+          alt="Marion et Edwige marchent ensemble dans un lieu de retraite"
+          widths={[540, 810, 1080]}
+          sizes="(max-width: 832px) 100vw, 47vw"
+          quality={86}
+        />
+        <span>L’humain comme fil rouge</span>
+      </div>
+      <div class="timeline-content">
+        <div class="timeline-item reveal">
+          <span>2021</span>
+          <div>
+            <h2>{data.sections.trainingTitle}</h2>
+            <p>{data.sections.trainingText}</p>
+          </div>
+        </div>
+        <div class="timeline-item reveal reveal-delay-1">
+          <span>2026</span>
+          <div>
+            <h2>{data.sections.nowTitle}</h2>
+            <p>{data.sections.nowText}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="manifesto">
+    <div class="container">
+      <p class="reveal">
+        « Transmettre un maximum d’outils pour une meilleure connaissance de
+        soi. »
+      </p>
+      <p class="manifesto-wish reveal reveal-delay-1">
+        {data.sections.wishText}
+      </p>
+      <span class="reveal reveal-delay-1">Marion · <span class="brand-name">Gao Mata</span></span>
+    </div>
+  </section>
+
+  <section class="section partnerships" aria-labelledby="partners-title">
+    <div class="container">
+      <div class="partners-heading reveal">
+        <span class="eyebrow">Partenariats & événements</span>
+        <h2 id="partners-title">{data.sections.partnersTitle}</h2>
+      </div>
+      <div class="partners-layout">
+        <div class="partners-images">
+          <div class="partner-image partner-image--large reveal">
+            <Image
+              src={eventOne}
+              alt="Atelier collectif de yoga aérien lors d’un événement"
+              widths={[480, 720, 960]}
+              sizes="(max-width: 832px) 100vw, 40vw"
+              quality={85}
+            />
+          </div>
+          <div class="partner-image partner-image--small reveal reveal-delay-1">
+            <Image
+              src={eventTwo}
+              alt="Moment de partage lors d’un événement Gao Mata"
+              widths={[320, 560]}
+              sizes="(max-width: 832px) 72vw, 22vw"
+              quality={85}
+            />
+          </div>
+        </div>
+        <div class="partners-list">
+          {PARTNERSHIPS.map((partner, index) => (
+            <article class={`reveal reveal-delay-${(index % 3) + 1}`}>
+              <span>0{index + 1}</span>
+              <div>
+                <h3>{partner.title}</h3>
+                <p>{partner.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section events-cta">
+    <div class="narrow reveal">
+      <span class="eyebrow">Inventer un moment ensemble</span>
+      <h2>Anniversaire, EVJF, retraite ou projet de structure&nbsp;?</h2>
+      <p class="lead">
+        Je déplace mes hamacs, mes outils et mon grain de folie pour imaginer
+        des formats sur mesure avec les groupes, les familles et les
+        professionnels.
+      </p>
+      <a
+        class="button"
+        href={`mailto:${SITE.email}?subject=Projet%20ou%20événement%20Gao%20Mata`}
+      >
+        Parler de mon projet
+        <span class="button__icon" aria-hidden="true">
+          ↗
+        </span>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .story-grid {
+    display: grid;
+    align-items: start;
+    gap: clamp(3rem, 8vw, 9rem);
+    grid-template-columns: 0.45fr 1fr;
+  }
+
+  .story-year {
+    color: var(--sienna);
+    font-family: var(--font-display);
+    font-size: clamp(5rem, 14vw, 13rem);
+    font-weight: 500;
+    letter-spacing: -0.07em;
+    line-height: 0.75;
+  }
+
+  .story-copy h2 {
+    max-width: 10ch;
+  }
+
+  .story-copy > p:last-child {
+    max-width: 40rem;
+    margin-top: 2rem;
+    color: var(--muted);
+  }
+
+  .timeline {
+    background: var(--clay);
+  }
+
+  .timeline-grid {
+    display: grid;
+    align-items: center;
+    gap: clamp(3rem, 8vw, 8rem);
+    grid-template-columns: 0.9fr 1.1fr;
+  }
+
+  .timeline-image {
+    position: relative;
+    min-height: 44rem;
+    overflow: hidden;
+    border-radius: 1.15rem;
+  }
+
+  .timeline-image :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .timeline-image > span {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
+    padding: 0.8rem;
+    border-radius: var(--radius-pill);
+    background: rgb(75 46 32 / 70%);
+    color: var(--white);
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-align: center;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+  }
+
+  .timeline-content {
+    display: grid;
+  }
+
+  .timeline-item {
+    display: grid;
+    padding: 3rem 0;
+    border-top: 1px solid rgb(75 46 32 / 23%);
+    gap: 2rem;
+    grid-template-columns: 4rem 1fr;
+  }
+
+  .timeline-item > span {
+    color: var(--ink);
+    font-size: 0.7rem;
+    font-weight: 850;
+  }
+
+  .timeline-item h2 {
+    max-width: 11ch;
+    margin-bottom: 1.2rem;
+    color: var(--ink);
+    font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+  }
+
+  .timeline-item p {
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .manifesto {
+    padding-block: clamp(7rem, 15vw, 15rem);
+    background: var(--harbor);
+    color: var(--white);
+    text-align: center;
+  }
+
+  .manifesto p {
+    max-width: 18ch;
+    margin: 0 auto 2.5rem;
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 7vw, 6.5rem);
+    font-weight: 470;
+    letter-spacing: -0.05em;
+    line-height: 0.98;
+  }
+
+  .manifesto p.manifesto-wish {
+    max-width: 36rem;
+    margin: 0 auto 2.5rem;
+    color: rgb(255 255 255 / 78%);
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.7;
+  }
+
+  .manifesto span {
+    display: block;
+    color: var(--clay);
+    font-size: 0.65rem;
+    font-weight: 780;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .manifesto .brand-name {
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+
+  .partners-heading {
+    display: grid;
+    align-items: end;
+    margin-bottom: 5rem;
+    gap: 2rem;
+    grid-template-columns: 0.4fr 1fr;
+  }
+
+  .partners-heading h2 {
+    max-width: 12ch;
+    margin: 0;
+  }
+
+  .partners-layout {
+    display: grid;
+    align-items: start;
+    gap: clamp(3rem, 7vw, 7rem);
+    grid-template-columns: 0.85fr 1.15fr;
+  }
+
+  .partners-images {
+    position: sticky;
+    top: 8rem;
+    display: grid;
+    align-items: end;
+    gap: 1rem;
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+
+  .partner-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.15rem;
+  }
+
+  .partner-image :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .partner-image--large {
+    min-height: 36rem;
+  }
+
+  .partner-image--small {
+    min-height: 24rem;
+  }
+
+  .partners-list {
+    display: grid;
+  }
+
+  .partners-list article {
+    display: grid;
+    padding: 2rem 0;
+    border-top: 1px solid rgb(75 46 32 / 16%);
+    gap: 1.5rem;
+    grid-template-columns: 2rem 1fr;
+  }
+
+  .partners-list article > span {
+    color: var(--walnut);
+    font-size: 0.62rem;
+    font-weight: 850;
+  }
+
+  .partners-list h3 {
+    margin-bottom: 0.65rem;
+  }
+
+  .partners-list p {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .events-cta {
+    background: var(--cream-deep);
+    text-align: center;
+  }
+
+  .events-cta h2,
+  .events-cta p {
+    margin-inline: auto;
+  }
+
+  .events-cta h2 {
+    max-width: 14ch;
+  }
+
+  .events-cta .lead {
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 52rem) {
+    .story-grid,
+    .timeline-grid,
+    .partners-heading,
+    .partners-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .story-year {
+      font-size: 7rem;
+    }
+
+    .timeline-image {
+      min-height: 34rem;
+    }
+
+    .partners-images {
+      position: relative;
+      top: auto;
+      grid-template-columns: 1fr 0.85fr;
+    }
+
+    .partner-image--large,
+    .partner-image--small {
+      min-height: 22rem;
+    }
+  }
+</style>

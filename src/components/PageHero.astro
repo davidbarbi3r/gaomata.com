@@ -1,0 +1,171 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { SITE } from '../data/site';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  image: ImageMetadata;
+  alt: string;
+  tone?: 'amber' | 'harbor' | 'olive' | 'sienna';
+}
+
+const { eyebrow, title, intro, image, alt, tone = 'amber' } = Astro.props;
+const eyebrowParts = eyebrow.split(SITE.name);
+---
+
+<section class={`page-hero page-hero--${tone}`}>
+  <div class="container page-hero__grid">
+    <div class="page-hero__copy">
+      <span class="eyebrow">
+        {eyebrowParts.map((part, index) => (
+          <>
+            {part}
+            {index < eyebrowParts.length - 1 && (
+              <span class="brand-name">{SITE.name}</span>
+            )}
+          </>
+        ))}
+      </span>
+      <h1>{title}</h1>
+      <p>{intro}</p>
+      <slot />
+    </div>
+    <div class="page-hero__media reveal reveal-delay-1">
+      <Image
+        src={image}
+        alt={alt}
+        widths={[480, 720, 960]}
+        sizes="(max-width: 832px) 100vw, 45vw"
+        loading="eager"
+        quality={85}
+      />
+      <span class="page-hero__stamp" aria-hidden="true">
+        <svg viewBox="0 0 80 80">
+          <path d="M40 68V23m0 11C26 32 20 23 20 13c14 2 20 9 20 21Zm0 14c14-2 20-11 20-21-14 2-20 9-20 21Z"></path>
+        </svg>
+      </span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    min-height: min(58rem, 100dvh);
+    padding: 9.5rem 0 3rem;
+    overflow: hidden;
+  }
+
+  .page-hero--amber {
+    background: var(--amber-deep);
+    color: var(--white);
+  }
+
+  .page-hero--harbor {
+    background: var(--harbor);
+    color: var(--white);
+  }
+
+  .page-hero--olive {
+    background: var(--olive);
+    color: var(--white);
+  }
+
+  .page-hero--sienna {
+    background: var(--sienna);
+    color: var(--white);
+  }
+
+  .page-hero__grid {
+    display: grid;
+    min-height: calc(min(58rem, 100dvh) - 12.5rem);
+    align-items: center;
+    gap: clamp(2.5rem, 7vw, 7rem);
+    grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.95fr);
+  }
+
+  .page-hero__copy {
+    position: relative;
+    z-index: 1;
+    padding-block: 3rem;
+  }
+
+  .page-hero h1 {
+    max-width: 9.5ch;
+    margin-bottom: 2rem;
+  }
+
+  .page-hero__copy > p {
+    max-width: 39rem;
+    margin-bottom: 2rem;
+    color: var(--white);
+    font-size: clamp(1.05rem, 1.7vw, 1.28rem);
+  }
+
+  .page-hero__media {
+    position: relative;
+    align-self: stretch;
+    min-height: 32rem;
+    max-height: 44rem;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-deep);
+    transform: rotate(1.8deg);
+  }
+
+  .page-hero__media :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 28%;
+  }
+
+  .page-hero__stamp {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    display: grid;
+    width: 5.3rem;
+    height: 5.3rem;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 35%);
+    border-radius: 50%;
+    background: rgb(30 47 68 / 28%);
+    backdrop-filter: blur(8px);
+  }
+
+  .page-hero__stamp svg {
+    width: 2.8rem;
+    fill: none;
+    stroke: white;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1;
+  }
+
+  @media (max-width: 52rem) {
+    .page-hero {
+      min-height: auto;
+      padding-top: 8rem;
+    }
+
+    .page-hero__grid {
+      min-height: 0;
+      grid-template-columns: 1fr;
+    }
+
+    .page-hero__copy {
+      padding-block: 2rem 0;
+    }
+
+    .page-hero__media {
+      min-height: 24rem;
+      max-height: 30rem;
+      transform: none;
+    }
+  }
+</style>

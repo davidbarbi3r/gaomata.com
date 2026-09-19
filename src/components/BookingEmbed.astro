@@ -1,0 +1,253 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  description: string;
+  embedUrl: string;
+  profileUrl: string;
+  buttonLabel: string;
+  tone?: 'amber' | 'olive';
+  autoLoad?: boolean;
+  compact?: boolean;
+}
+
+const {
+  id,
+  title,
+  description,
+  embedUrl,
+  profileUrl,
+  buttonLabel,
+  tone = 'amber',
+  autoLoad = false,
+  compact = false,
+} = Astro.props;
+const origin = new URL(embedUrl).origin;
+---
+
+<section
+  class:list={['booking', `booking--${tone}`, { 'booking--compact': compact }]}
+  id={id}
+  data-booking-embed
+  data-origin={origin}
+>
+  <div class="booking__intro">
+    <span class="booking__label">
+      {tone === 'amber' ? 'Collectif' : 'Individuel'}
+    </span>
+    <h2>{title}</h2>
+    <p>{description}</p>
+    {!autoLoad && (
+      <button class="button button--light" type="button" data-load-booking>
+        {buttonLabel}
+        <span class="button__icon" aria-hidden="true">
+          ↓
+        </span>
+      </button>
+    )}
+    <small>
+      {autoLoad
+        ? 'La réservation est assurée par Aurarios.'
+        : 'En continuant, le module tiers Aurarios sera chargé.'}
+      <a href={profileUrl} target="_blank" rel="noreferrer">
+        Ouvrir dans un nouvel onglet
+      </a>
+    </small>
+  </div>
+
+  <div class="booking__frame" data-booking-frame hidden={!autoLoad}>
+    <div class="booking__loading" aria-live="polite">
+      <span></span>
+      Chargement des disponibilités…
+    </div>
+    <iframe
+      title={`Réservation ${title} avec Gao Mata`}
+      src={autoLoad ? embedUrl : undefined}
+      data-src={autoLoad ? undefined : embedUrl}
+      data-booking-iframe
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin"
+    ></iframe>
+  </div>
+</section>
+
+<script>
+  const widgets = document.querySelectorAll<HTMLElement>(
+    '[data-booking-embed]',
+  );
+
+  widgets.forEach((widget) => {
+    const button = widget.querySelector<HTMLButtonElement>(
+      '[data-load-booking]',
+    );
+    const frame = widget.querySelector<HTMLElement>('[data-booking-frame]');
+    const iframe = widget.querySelector<HTMLIFrameElement>(
+      '[data-booking-iframe]',
+    );
+    const loading = widget.querySelector<HTMLElement>('.booking__loading');
+    const allowedOrigin = widget.dataset.origin;
+
+    const hideLoading = () => {
+      loading?.setAttribute('hidden', '');
+    };
+
+    if (iframe?.src) {
+      iframe.addEventListener('load', hideLoading, { once: true });
+    }
+
+    button?.addEventListener(
+      'click',
+      () => {
+        if (!frame || !iframe || !iframe.dataset.src) return;
+        frame.hidden = false;
+        iframe.src = iframe.dataset.src;
+        button.setAttribute('aria-expanded', 'true');
+        iframe.addEventListener('load', hideLoading, { once: true });
+      },
+      { once: true },
+    );
+
+    window.addEventListener('message', (event) => {
+      if (
+        event.origin !== allowedOrigin ||
+        event.source !== iframe?.contentWindow ||
+        typeof event.data !== 'object' ||
+        event.data === null ||
+        event.data.type !== 'aurarios-embed-resize'
+      ) {
+        return;
+      }
+
+      const requestedHeight = Number(event.data.height);
+      if (!Number.isFinite(requestedHeight)) return;
+      iframe.style.height = `${Math.min(Math.max(requestedHeight, 600), 1800)}px`;
+    });
+  });
+</script>
+
+<style>
+  .booking {
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    color: var(--white);
+    scroll-margin-top: 7rem;
+  }
+
+  .booking--amber {
+    background: var(--amber-deep);
+  }
+
+  .booking--olive {
+    background: var(--olive);
+  }
+
+  .booking__intro {
+    display: grid;
+    min-height: 29rem;
+    align-content: end;
+    padding: clamp(1.8rem, 5vw, 4rem);
+  }
+
+  .booking--compact .booking__intro {
+    min-height: auto;
+    padding: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .booking--compact .booking__label {
+    margin-bottom: 2rem;
+  }
+
+  .booking--compact h2 {
+    margin-top: 0;
+    font-size: clamp(1.75rem, 3.2vw, 2.55rem);
+  }
+
+  .booking__label {
+    width: fit-content;
+    margin-bottom: auto;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid rgb(255 255 255 / 30%);
+    border-radius: var(--radius-pill);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .booking h2 {
+    max-width: 10ch;
+    margin-top: 5rem;
+    margin-bottom: 1rem;
+    font-size: clamp(1.9rem, 3.8vw, 3.15rem);
+  }
+
+  .booking p {
+    max-width: 35rem;
+    color: var(--white);
+  }
+
+  .booking .button {
+    width: fit-content;
+    margin-top: 1rem;
+  }
+
+  .booking small {
+    display: block;
+    margin-top: 1rem;
+    color: var(--white);
+    font-size: 0.65rem;
+  }
+
+  .booking small a {
+    margin-left: 0.35rem;
+    color: var(--white);
+  }
+
+  .booking__frame {
+    position: relative;
+    min-height: 38rem;
+    padding: 0.75rem;
+    background: var(--paper);
+  }
+
+  .booking__frame iframe {
+    display: block;
+    width: 100%;
+    min-height: 40rem;
+    border: 0;
+    border-radius: calc(var(--radius-lg) - 0.5rem);
+    background: var(--white);
+  }
+
+  .booking__loading {
+    position: absolute;
+    inset: 0.75rem;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    border-radius: calc(var(--radius-lg) - 0.5rem);
+    background: var(--paper);
+    color: var(--muted);
+    font-size: 0.75rem;
+    gap: 1rem;
+  }
+
+  .booking__loading[hidden] {
+    display: none;
+  }
+
+  .booking__loading span {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--clay);
+    animation: breathe 1.5s var(--ease-out) infinite alternate;
+  }
+
+  @keyframes breathe {
+    to {
+      opacity: 0.35;
+      transform: scale(0.7);
+    }
+  }
+</style>

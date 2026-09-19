@@ -1,0 +1,48 @@
+<!-- Calendrier Aurarios -->
+<div class="aurarios-embed-container">
+  <iframe
+    id="aurarios-calendar"
+    src="https://www.aurarios.fr/embed/gao-mata"
+    width="100%"
+    style="border: none; border-radius: 8px; min-height: 600px; display: block;"
+    title="Calendrier de réservation"
+  ></iframe>
+</div>
+
+<script>
+  // Ajustement automatique de la hauteur
+  window.addEventListener('message', function(event) {
+    if (event.data.type === 'aurarios-embed-resize') {
+      const iframe = document.getElementById('aurarios-calendar');
+      // event.source identifie l'iframe émettrice (permet plusieurs widgets sur la même page)
+      if (iframe && event.source === iframe.contentWindow) {
+        iframe.style.height = event.data.height + 'px';
+      }
+    }
+  });
+</script>
+
+
+<!-- Prestations Aurarios -->
+<div class="aurarios-embed-container">
+  <iframe
+    id="aurarios-prestations"
+    src="https://www.aurarios.fr/embed/gao-mata/prestations"
+    width="100%"
+    style="border: none; border-radius: 8px; min-height: 600px; display: block;"
+    title="Catalogue des prestations"
+  ></iframe>
+</div>
+
+<script>
+  // Ajustement automatique de la hauteur
+  window.addEventListener('message', function(event) {
+    if (event.data.type === 'aurarios-embed-resize') {
+      const iframe = document.getElementById('aurarios-prestations');
+      // event.source identifie l'iframe émettrice (permet plusieurs widgets sur la même page)
+      if (iframe && event.source === iframe.contentWindow) {
+        iframe.style.height = event.data.height + 'px';
+      }
+    }
+  });
+</script>

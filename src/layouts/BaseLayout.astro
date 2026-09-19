@@ -1,0 +1,85 @@
+---
+import '@fontsource-variable/fraunces/wght.css';
+import '@fontsource-variable/manrope/wght.css';
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import SeoHead from '../components/SeoHead.astro';
+import { localBusinessSchema } from '../data/seo';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  type?: 'website' | 'profile';
+  schemas?: Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  type,
+  schemas = [],
+  noindex = false,
+} = Astro.props;
+const allSchemas = [localBusinessSchema, ...schemas];
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content="#F6F0E5" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <SeoHead
+      {title}
+      {description}
+      {image}
+      {type}
+      schemas={allSchemas}
+      {noindex}
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenu">
+      Aller au contenu
+    </a>
+    <Header />
+    <main id="contenu">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      const reducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)',
+      );
+
+      if (!reducedMotion.matches && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+
+        document
+          .querySelectorAll('.reveal')
+          .forEach((item) => observer.observe(item));
+      } else {
+        document
+          .querySelectorAll('.reveal')
+          .forEach((item) => item.classList.add('is-visible'));
+      }
+    </script>
+  </body>
+</html>

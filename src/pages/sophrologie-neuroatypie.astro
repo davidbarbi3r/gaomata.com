@@ -1,0 +1,543 @@
+---
+import { Image } from 'astro:assets';
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BookingEmbed from '../components/BookingEmbed.astro';
+import PageHero from '../components/PageHero.astro';
+import PricingList from '../components/PricingList.astro';
+import sophroHero from '../assets/images/sophro.jpeg';
+import portrait from '../assets/images/marion-portrait.jpeg';
+import { breadcrumbSchema, serviceSchema } from '../data/seo';
+import {
+  LOCATIONS,
+  SITE,
+  SOPHROLOGY_PRICES,
+  SOPHROLOGY_REASONS,
+} from '../data/site';
+
+const entry = await getEntry('pages', 'sophrologie-neuroatypie');
+if (!entry) throw new Error('Le contenu Sophrologie est introuvable.');
+const { data } = entry;
+const schemas = [
+  serviceSchema(
+    'Sophrologie et accompagnement de la neuroatypie',
+    data.description,
+    '/sophrologie-neuroatypie',
+    'Séances de sophrologie',
+  ),
+  breadcrumbSchema([
+    { name: 'Accueil', path: '/' },
+    { name: 'Sophrologie et Neuroatypie', path: '/sophrologie-neuroatypie' },
+  ]),
+];
+---
+
+<BaseLayout title={data.title} description={data.description} {schemas}>
+  <PageHero
+    eyebrow={data.eyebrow}
+    title={data.headline}
+    intro={data.intro}
+    image={sophroHero}
+    alt="Marion dans un environnement naturel calme au bord de l’eau"
+    tone="olive"
+  >
+    <a class="button button--light" href={data.ctaHref}>
+      {data.ctaLabel}
+      <span class="button__icon" aria-hidden="true">
+        ↗
+      </span>
+    </a>
+  </PageHero>
+
+  <section class="section definition">
+    <div class="container definition-grid">
+      <div class="definition-title reveal">
+        <span class="eyebrow">Comprendre</span>
+        <h2>{data.sections.definitionTitle}</h2>
+      </div>
+      <div class="definition-copy reveal reveal-delay-1">
+        <p class="lead">{data.sections.definitionText}</p>
+        <blockquote>
+          « Prendre conscience de ses capacités à traverser, s’ajuster et
+          retrouver un peu plus d’espace. »
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section class="section reasons" aria-labelledby="reasons-title">
+    <div class="container reasons-grid">
+      <div class="reasons-heading reveal">
+        <span class="eyebrow">Pour quoi venir ?</span>
+        <h2 id="reasons-title">{data.sections.reasonsTitle}</h2>
+      </div>
+      <div class="reason-list">
+        {SOPHROLOGY_REASONS.map((reason, index) => (
+          <div class={`reason reveal reveal-delay-${(index % 3) + 1}`}>
+            <span>0{index + 1}</span>
+            <p>{reason}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section process">
+    <div class="container process-grid">
+      <div class="process-media reveal">
+        <Image
+          src={portrait}
+          alt="Marion Aubreton, praticienne en sophrologie"
+          widths={[480, 720, 960]}
+          sizes="(max-width: 832px) 100vw, 42vw"
+          quality={85}
+        />
+        <span class="process-label">Écouter avant de proposer</span>
+      </div>
+      <div class="process-copy">
+        <div class="reveal">
+          <span class="eyebrow">Le déroulé</span>
+          <h2>{data.sections.processTitle}</h2>
+          <p>{data.sections.processText}</p>
+        </div>
+        <div class="process-steps">
+          <article class="reveal">
+            <span>01</span>
+            <div>
+              <h3>Échanger</h3>
+              <p>
+                Poser le besoin, les ressentis et ce qui est possible
+                aujourd’hui.
+              </p>
+            </div>
+          </article>
+          <article class="reveal reveal-delay-1">
+            <span>02</span>
+            <div>
+              <h3>Expérimenter</h3>
+              <p>
+                Mouvement, respiration et visualisation s’ajustent à la séance.
+              </p>
+            </div>
+          </article>
+          <article class="reveal reveal-delay-2">
+            <span>03</span>
+            <div>
+              <h3>Intégrer</h3>
+              <p>
+                Mettre des mots et repartir avec des outils réutilisables au
+                quotidien.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section neuro">
+    <div class="container neuro-grid">
+      <div class="neuro-heading reveal">
+        <span class="eyebrow">TND · TDAH · TSA · DYS · HPI</span>
+        <h2>{data.sections.neuroTitle}</h2>
+      </div>
+      <div class="neuro-copy reveal reveal-delay-1">
+        <p class="lead">{data.sections.neuroText}</p>
+        <p class="boundary">{data.sections.boundaryText}</p>
+        <div class="neuro-tags" aria-label="Principes de l’accompagnement">
+          <span>Décoder</span>
+          <span>Réguler</span>
+          <span>Adapter</span>
+          <span>Soutenir</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section sophro-prices">
+    <div class="container price-layout">
+      <div class="price-copy reveal">
+        <span class="eyebrow">Accompagnement individuel</span>
+        <h2>{data.sections.pricesTitle}</h2>
+        <p>
+          Certaines complémentaires santé prennent en charge la sophrologie.
+          Le plus simple, c’est de leur en faire la demande.
+        </p>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <PricingList
+          title="Séances de sophrologie"
+          items={SOPHROLOGY_PRICES.map((item) => ({ ...item }))}
+          note="Premier rendez-vous uniquement par email"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section sophro-booking" id="prestations">
+    <div class="container reveal">
+      <BookingEmbed
+        id="reservation-sophrologie"
+        title="Choisir une prestation"
+        description="Retrouve les accompagnements en sophrologie et les créneaux proposés sur Aurarios."
+        embedUrl={SITE.sophrologyEmbed}
+        profileUrl={SITE.bookingProfile}
+        buttonLabel="Afficher les prestations"
+        tone="olive"
+        autoLoad
+        compact
+      />
+    </div>
+  </section>
+
+  <section class="section appointments">
+    <div class="container appointments-grid">
+      <div class="appointment-heading reveal">
+        <span class="eyebrow">Où se rencontrer ?</span>
+        <h2>Deux lieux, le même cadre attentif.</h2>
+      </div>
+      <div class="appointment-list">
+        {LOCATIONS.map((location, index) => (
+          <article class={`appointment reveal reveal-delay-${index + 1}`}>
+            <span>{location.city}</span>
+            <h3>{location.name}</h3>
+            <p>{location.detail}</p>
+          </article>
+        ))}
+        <div class="appointment-cta reveal">
+          <p>Pour une première séance, échangeons d’abord par email.</p>
+          <a class="button button--light" href={`mailto:${SITE.email}`}>
+            Écrire à Marion
+            <span class="button__icon" aria-hidden="true">
+              ↗
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section faq">
+    <div class="narrow">
+      <div class="faq-heading reveal">
+        <span class="eyebrow">Questions fréquentes</span>
+        <h2>Avant une première séance.</h2>
+      </div>
+      {data.faqs.map((faq, index) => (
+        <details class="reveal">
+          <summary>
+            <span>0{index + 1}</span>
+            {faq.question}
+          </summary>
+          <p>{faq.answer}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .definition-grid,
+  .reasons-grid,
+  .neuro-grid,
+  .price-layout,
+  .appointments-grid {
+    display: grid;
+    align-items: start;
+    gap: clamp(3rem, 8vw, 9rem);
+    grid-template-columns: 0.9fr 1.1fr;
+  }
+
+  .definition-title h2,
+  .reasons-heading h2,
+  .neuro-heading h2,
+  .price-copy h2,
+  .appointment-heading h2 {
+    max-width: 10ch;
+  }
+
+  .definition-copy blockquote {
+    margin: 4rem 0 0;
+    padding: 2rem 0 0 2rem;
+    border-top: 1px solid rgb(75 46 32 / 16%);
+    border-left: 0.35rem solid var(--clay);
+    color: var(--harbor);
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+
+  .reasons {
+    background: var(--clay);
+  }
+
+  .reason-list {
+    display: grid;
+  }
+
+  .reason {
+    display: grid;
+    align-items: baseline;
+    padding: 1.5rem 0;
+    border-top: 1px solid rgb(75 46 32 / 22%);
+    gap: 1.5rem;
+    grid-template-columns: 2rem 1fr;
+  }
+
+  .reason > span {
+    color: var(--ink);
+    font-size: 0.62rem;
+    font-weight: 850;
+  }
+
+  .reason p {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2.4vw, 2rem);
+    font-weight: 560;
+    line-height: 1.2;
+  }
+
+  .process {
+    background: var(--harbor);
+    color: var(--white);
+  }
+
+  .process-grid {
+    display: grid;
+    align-items: center;
+    gap: clamp(3rem, 8vw, 8rem);
+    grid-template-columns: 0.85fr 1.15fr;
+  }
+
+  .process-media {
+    position: relative;
+    min-height: 42rem;
+    overflow: hidden;
+    border-radius: 1.15rem;
+  }
+
+  .process-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .process-label {
+    position: absolute;
+    right: 1.2rem;
+    bottom: 1.2rem;
+    left: 1.2rem;
+    padding: 0.8rem;
+    border-radius: var(--radius-pill);
+    background: rgb(30 47 68 / 78%);
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-align: center;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+  }
+
+  .process-copy > div:first-child > p {
+    max-width: 38rem;
+    color: rgb(255 255 255 / 68%);
+  }
+
+  .process-steps {
+    display: grid;
+    margin-top: 3rem;
+  }
+
+  .process-steps article {
+    display: grid;
+    padding: 1.2rem 0;
+    border-top: 1px solid rgb(255 255 255 / 14%);
+    gap: 1.5rem;
+    grid-template-columns: 2rem 1fr;
+  }
+
+  .process-steps article > span {
+    color: var(--clay);
+    font-size: 0.62rem;
+    font-weight: 800;
+  }
+
+  .process-steps h3 {
+    margin-bottom: 0.35rem;
+    font-size: 1.35rem;
+  }
+
+  .process-steps p {
+    margin: 0;
+    color: rgb(255 255 255 / 60%);
+    font-size: 0.84rem;
+  }
+
+  .neuro {
+    background: var(--cream-deep);
+  }
+
+  .boundary {
+    margin: 2.5rem 0;
+    padding: 1.3rem 1.5rem;
+    border-left: 0.3rem solid var(--sienna);
+    background: rgb(255 255 255 / 35%);
+    color: var(--walnut);
+    font-size: 0.84rem;
+  }
+
+  .neuro-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .neuro-tags span {
+    padding: 0.65rem 1rem;
+    border: 1px solid rgb(75 46 32 / 17%);
+    border-radius: var(--radius-pill);
+    color: var(--harbor);
+    font-size: 0.7rem;
+    font-weight: 750;
+  }
+
+  .sophro-prices {
+    background: var(--sienna);
+    color: var(--white);
+  }
+
+  .price-copy {
+    position: sticky;
+    top: 8rem;
+  }
+
+  .price-copy p {
+    max-width: 32rem;
+    color: var(--white);
+  }
+
+  .price-layout > :last-child {
+    color: var(--ink);
+  }
+
+  .appointments {
+    background: var(--olive);
+    color: var(--white);
+  }
+
+  .sophro-booking {
+    background: var(--cream-deep);
+  }
+
+  .appointment-list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .appointment {
+    padding: clamp(1.5rem, 4vw, 2.8rem);
+    border-radius: var(--radius-md);
+    background: rgb(30 47 68 / 24%);
+  }
+
+  .appointment > span {
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 0.62rem;
+    font-weight: 820;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .appointment h3 {
+    margin-bottom: 0.7rem;
+    font-size: clamp(1.7rem, 3vw, 2.6rem);
+  }
+
+  .appointment p {
+    margin: 0;
+    color: var(--white);
+  }
+
+  .appointment-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.4rem;
+  }
+
+  .appointment-cta p {
+    max-width: 20rem;
+    margin: 0;
+  }
+
+  .faq-heading {
+    margin-bottom: 3rem;
+  }
+
+  .faq-heading h2 {
+    max-width: 11ch;
+  }
+
+  details {
+    padding: 1.5rem 0;
+    border-top: 1px solid rgb(75 46 32 / 17%);
+  }
+
+  details:last-child {
+    border-bottom: 1px solid rgb(75 46 32 / 17%);
+  }
+
+  summary {
+    display: grid;
+    align-items: baseline;
+    color: var(--harbor);
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.4vw, 1.8rem);
+    font-weight: 580;
+    gap: 1rem;
+    grid-template-columns: 2rem 1fr;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary span {
+    color: var(--walnut);
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+  }
+
+  details p {
+    max-width: 42rem;
+    margin: 1rem 0 0 3rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 52rem) {
+    .definition-grid,
+    .reasons-grid,
+    .process-grid,
+    .neuro-grid,
+    .price-layout,
+    .appointments-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .process-media {
+      min-height: 34rem;
+    }
+
+    .price-copy {
+      position: static;
+    }
+  }
+</style>

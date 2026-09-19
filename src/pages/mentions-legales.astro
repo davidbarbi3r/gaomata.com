@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../data/site';
+---
+
+<BaseLayout
+  title="Mentions légales et confidentialité"
+  description="Informations légales, confidentialité et conditions d’utilisation du site Gao Mata."
+  noindex
+>
+  <header class="legal-hero">
+    <div class="narrow">
+      <span class="eyebrow">Transparence</span>
+      <h1>Mentions légales & confidentialité.</h1>
+      <p>
+        Les informations essentielles sur l’édition du site, l’utilisation de
+        tes données et les limites de l’accompagnement.
+      </p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="narrow legal-content">
+      <article>
+        <span>01</span>
+        <div>
+          <h2>Édition du site</h2>
+          <p>
+            Le site gaomata.com est édité par {SITE.owner}, fondatrice de{' '}
+            {SITE.name}. Tu peux me joindre à
+            <a href={`mailto:${SITE.email}`}>{SITE.email}</a> ou au
+            <a href={SITE.phoneHref}>{SITE.phoneDisplay}</a>. Je suis également
+            directrice de la publication.
+          </p>
+        </div>
+      </article>
+
+      <article>
+        <span>02</span>
+        <div>
+          <h2>Données personnelles</h2>
+          <p>
+            Ce site ne comporte pas de formulaire et ne dépose aucun cookie
+            publicitaire. Les messages envoyés par email servent uniquement à
+            répondre à ta demande et à préparer, si besoin, un rendez-vous.
+          </p>
+          <p>
+            Lorsque tu choisis d’afficher un module de réservation, le service
+            tiers Aurarios est chargé. Son fonctionnement et les informations
+            que tu lui transmets relèvent alors de sa propre politique de
+            confidentialité.
+          </p>
+        </div>
+      </article>
+
+      <article>
+        <span>03</span>
+        <div>
+          <h2>Propriété intellectuelle</h2>
+          <p>
+            Les textes, photographies, éléments graphiques et l’identité GAO
+            MATA sont protégés. Toute reproduction ou réutilisation nécessite
+            mon autorisation écrite préalable.
+          </p>
+        </div>
+      </article>
+
+      <article>
+        <span>04</span>
+        <div>
+          <h2>Limites de l’accompagnement</h2>
+          <p>
+            Les informations publiées ici ne constituent pas un avis médical. La
+            sophrologie et les pratiques corporelles proposées ne remplacent ni
+            un diagnostic, ni un traitement, ni un suivi médical ou paramédical.
+          </p>
+        </div>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal-hero {
+    padding: clamp(11rem, 18vw, 15rem) 0 clamp(5rem, 9vw, 8rem);
+    background: var(--harbor);
+    color: var(--white);
+  }
+
+  .legal-hero h1 {
+    max-width: 9ch;
+    margin-bottom: 2rem;
+  }
+
+  .legal-hero p {
+    max-width: 42rem;
+    margin: 0;
+    color: var(--white);
+    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  }
+
+  .legal-content {
+    border-top: 1px solid rgb(75 46 32 / 16%);
+  }
+
+  article {
+    display: grid;
+    padding: clamp(2rem, 5vw, 4rem) 0;
+    border-bottom: 1px solid rgb(75 46 32 / 16%);
+    gap: 1.5rem;
+    grid-template-columns: 3rem 1fr;
+  }
+
+  article > span {
+    color: var(--walnut);
+    font-size: 0.66rem;
+    font-weight: 850;
+  }
+
+  article h2 {
+    margin-bottom: 1.3rem;
+    font-size: clamp(1.65rem, 3vw, 2.4rem);
+  }
+
+  article p {
+    max-width: 48rem;
+    color: var(--muted);
+  }
+
+  article a {
+    margin-inline: 0.25rem;
+    color: var(--walnut);
+    font-weight: 700;
+  }
+</style>
