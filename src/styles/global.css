@@ -183,7 +183,6 @@ h3,
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
   margin-bottom: 1.4rem;
   color: currentColor;
   font-size: 0.68rem;
@@ -191,14 +190,6 @@ h3,
   letter-spacing: 0.17em;
   line-height: 1;
   text-transform: uppercase;
-}
-
-.eyebrow::before {
-  width: 1.6rem;
-  height: 1px;
-  background: currentColor;
-  content: '';
-  opacity: 0.55;
 }
 
 .brand-name,

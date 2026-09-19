@@ -1,9 +1,7 @@
 ---
 import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from '../components/PageHero.astro';
 import ReservationSwitcher from '../components/ReservationSwitcher.astro';
-import bookingHero from '../assets/images/fly-evenement-4.jpeg';
 import { breadcrumbSchema } from '../data/seo';
 import { SITE } from '../data/site';
 
@@ -19,27 +17,14 @@ const schemas = [
 ---
 
 <BaseLayout title={data.title} description={data.description} {schemas}>
-  <PageHero
-    eyebrow={data.eyebrow}
-    title={data.headline}
-    intro={data.intro}
-    image={bookingHero}
-    alt="Séance collective Gao Mata dans les hamacs"
-    tone="sienna"
-  >
-    <a class="button button--light" href={data.ctaHref}>
-      {data.ctaLabel}
-      <span class="button__icon" aria-hidden="true">
-        ↓
-      </span>
-    </a>
-  </PageHero>
-
-  <section class="section booking-choice" id="choisir">
+  <section class="book-hero" id="choisir">
     <div class="container">
-      <div class="choice-heading reveal">
-        <span class="eyebrow">Réserver en ligne</span>
-        <h2>{data.sections.choiceTitle}</h2>
+      <div class="book-hero__copy">
+        <div>
+          <span class="eyebrow">{data.eyebrow}</span>
+          <h1>{data.headline}</h1>
+        </div>
+        <p>{data.intro}</p>
       </div>
 
       <ReservationSwitcher
@@ -61,7 +46,7 @@ const schemas = [
           class="button"
           href={`mailto:${SITE.email}?subject=Première%20séance%20de%20sophrologie`}
         >
-          Écrire à Marion
+          M’écrire
           <span class="button__icon" aria-hidden="true">
             ↗
           </span>
@@ -98,17 +83,24 @@ const schemas = [
 </BaseLayout>
 
 <style>
-  .choice-heading {
-    display: grid;
-    align-items: end;
-    margin-bottom: 4rem;
-    gap: 2rem;
-    grid-template-columns: 0.4fr 1fr;
+  .book-hero {
+    padding: 8.5rem 0 3.5rem;
   }
 
-  .choice-heading h2 {
-    max-width: 11ch;
+  .book-hero__copy {
+    max-width: 38rem;
+    margin-bottom: 2.25rem;
+  }
+
+  .book-hero h1 {
+    max-width: 10ch;
+    margin: 0 0 0.85rem;
+  }
+
+  .book-hero p {
     margin: 0;
+    color: var(--muted);
+    font-size: clamp(1.02rem, 1.5vw, 1.16rem);
   }
 
   .first-appointment {
@@ -208,7 +200,11 @@ const schemas = [
   }
 
   @media (max-width: 52rem) {
-    .choice-heading,
+    .book-hero {
+      padding-top: 7.5rem;
+      padding-bottom: 2.5rem;
+    }
+
     .contact-grid {
       grid-template-columns: 1fr;
     }

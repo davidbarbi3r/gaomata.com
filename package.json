@@ -1,7 +1,7 @@
 {
   "name": "gao-mata",
   "version": "1.0.0",
-  "description": "Site officiel de Gao Mata — Fly Yoga, souplesse et sophrologie à Boisseuil et Limoges.",
+  "description": "Site officiel de Gao Mata : Fly Yoga, souplesse et sophrologie à Boisseuil et Limoges.",
   "type": "module",
   "private": true,
   "scripts": {

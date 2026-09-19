@@ -37,7 +37,10 @@ test('le CTA principal mène au choix de réservation', async ({ page }) => {
 
   await expect(page).toHaveURL(/\/reserver$/);
   await expect(
-    page.getByRole('heading', { name: 'Que souhaites-tu explorer ?' }),
+    page.getByRole('heading', { name: 'Ton espace est prêt.' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /Cours collectifs/ }),
   ).toBeVisible();
 });
 

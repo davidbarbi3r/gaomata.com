@@ -23,7 +23,7 @@ export const LOCATIONS = [
     city: 'Limoges',
     name: 'Cabinet d’Éloïse Krampt',
     detail:
-      '11 rue Degas — vendredis et un samedi par mois pour la sophrologie.',
+      '11 rue Degas, vendredis et un samedi par mois pour la sophrologie.',
   },
 ] as const;
 
@@ -35,12 +35,12 @@ export const FLY_FORMATS = [
   },
   {
     name: 'Fly Yoga',
-    text: 'Une séance plus dynamique, pour des explorations un peu plus poussées, avec une inspiration circassienne — toujours dans la joie et le partage.',
+    text: 'Une séance plus dynamique, pour des explorations un peu plus poussées, avec une inspiration circassienne, toujours dans la joie et le partage.',
     marker: 'Dynamique',
   },
   {
     name: 'Fly & Zen',
-    text: 'Mon atelier signature, développé il y a 4 ans — et je crois qu’il fait partie de vos chouchous. Sophrologie et hamac très bas, aucun niveau requis, détente profonde assurée. Dès septembre 2026, il se décline aussi en Fly & Zen Pyjama, un vendredi soir par mois. Que du bonheur.',
+    text: 'Mon atelier signature, développé il y a 4 ans. Je crois d’ailleurs qu’il fait partie de vos chouchous. Sophrologie et hamac très bas, aucun niveau requis, détente profonde assurée. Dès septembre 2026, il se décline aussi en Fly & Zen Pyjama, un vendredi soir par mois. Que du bonheur.',
     marker: 'Atelier signature',
   },
   {
@@ -55,7 +55,7 @@ export const FLY_FORMATS = [
   },
   {
     name: 'Fly Kids',
-    text: 'Réservé à vos enfants dès 7 ans, et aux ados, pour explorer tout son potentiel à l’aide du hamac. Un merveilleux espace de création, d’apprentissage de la conscience du corps, et de régulation émotionnelle — ludique, convivial, sans compétition.',
+    text: 'Réservé à vos enfants dès 7 ans, et aux ados, pour explorer tout son potentiel à l’aide du hamac. Un merveilleux espace de création, d’apprentissage de la conscience du corps, et de régulation émotionnelle. Ludique, convivial, sans compétition.',
     marker: '7 ans et plus',
   },
 ] as const;
@@ -68,7 +68,7 @@ export const COLLECTIVE_PRICES = {
     { label: 'Carte de 10 cours', price: '180 €' },
     { label: 'Abonnement 1 cours / semaine', price: '59 € / mois' },
     { label: 'Abonnement 2 cours / semaine', price: '108 € / mois' },
-    { label: 'Fly Kids — 1 h', price: '18 €' },
+    { label: 'Fly Kids, 1 h', price: '18 €' },
     { label: 'Fly Adulte-Enfant', price: '20 €' },
     { label: 'Fly & Zen', price: '27 €' },
   ],
@@ -90,7 +90,7 @@ export const SOPHROLOGY_PRICES = [
   {
     label: 'Première séance adulte',
     price: '75 €',
-    note: 'Obligatoire — 1 h 30 et plus',
+    note: 'Obligatoire, 1 h 30 et plus',
   },
   {
     label: 'Séance de suivi adulte',
@@ -121,17 +121,17 @@ export const TESTIMONIALS = [
   {
     quote:
       'Marion est solaire, très pédagogue. Elle m’a réconciliée avec le sport ; son accompagnement dans l’acceptation de soi est toujours bienveillant.',
-    author: 'C. — cours de souplesse',
+    author: 'C., cours de souplesse',
   },
   {
     quote:
       'Beaucoup de douceur, de bienveillance et jamais de prise de tête. On se sent bien accompagné et ça fait vraiment toute la différence.',
-    author: 'G. — Fly Yoga',
+    author: 'G., Fly Yoga',
   },
   {
     quote:
       'Je ne connaissais pas cette discipline. Marion sait nous mettre en confiance et en sécurité, et on progresse très vite.',
-    author: 'J. — Fly Yoga',
+    author: 'J., Fly Yoga',
   },
   {
     quote:

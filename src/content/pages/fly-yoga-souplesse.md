@@ -3,7 +3,7 @@ title: 'Fly Yoga et cours de souplesse à Boisseuil'
 description: 'Mes cours de Fly Yoga, Fly & Zen, Fly Kids et souplesse à Boisseuil, près de Limoges. Aucun prérequis, pas de niveaux.'
 eyebrow: 'Ma boîte à outils'
 headline: 'Le corps comme terrain de jeu.'
-intro: 'Durant une séance de Fly, tu prendras toujours le temps de bouger d’abord sans le hamac, pour réveiller — parfois renforcer — le corps, avant de t’envoler progressivement.'
+intro: 'Je t’accompagne du sol au hamac. On commence toujours par bouger sans le tissu, pour réveiller, parfois renforcer le corps, avant de t’envoler progressivement.'
 ctaLabel: 'Réserver un cours'
 ctaHref: '#planning'
 sections:
