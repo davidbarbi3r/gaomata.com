@@ -7,7 +7,7 @@ export const SITE = {
   phoneHref: 'tel:+33609050001',
   bookingProfile: 'https://www.aurarios.fr/professionnel/gao-mata',
   bookingOrigin: 'https://www.aurarios.fr',
-  collectiveEmbed: 'https://www.aurarios.fr/embed/gao-mata',
+  collectiveEmbed: 'https://www.aurarios.fr/embed/gao-mata?view=liste',
   sophrologyEmbed: 'https://www.aurarios.fr/embed/gao-mata/prestations',
   areaServed: ['Boisseuil', 'Limoges', 'Haute-Vienne'],
 } as const;

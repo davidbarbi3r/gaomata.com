@@ -73,6 +73,9 @@ const year = new Date().getFullYear();
       <span>Yoga aérien · Souplesse · Sophrologie</span>
       <a href="/mentions-legales">Mentions légales & confidentialité</a>
     </div>
+    <p class="footer-credit">
+      développé par <a href="https://www.davidbarbier.com" rel="noopener noreferrer">David</a>
+    </p>
   </div>
 </footer>
 
@@ -186,6 +189,24 @@ const year = new Date().getFullYear();
   }
 
   .footer-bottom a {
+    color: var(--walnut);
+  }
+
+  .footer-credit {
+    margin: 0.7rem 0 0;
+    color: var(--muted);
+    font-size: 0.56rem;
+    letter-spacing: 0.04em;
+    text-align: right;
+  }
+
+  .footer-credit a {
+    margin-inline-start: 0.35em;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .footer-credit a:hover {
     color: var(--walnut);
   }
 
