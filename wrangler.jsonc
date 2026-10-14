@@ -1,0 +1,42 @@
+// Worker « gaomata-com » : site statique (dist/) + API de l'admin.
+// Mise en service et secrets : voir docs/admin.md.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gaomata-com",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-12",
+  "compatibility_flags": ["global_fetch_strictly_public"],
+  "routes": [
+    { "pattern": "gaomata.fr", "custom_domain": true },
+    { "pattern": "www.gaomata.fr", "custom_domain": true },
+  ],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // Le Worker ne s'exécute d'abord que pour l'API et les photos ;
+    // tout le reste est servi directement comme fichier statique.
+    "run_worker_first": ["/api/*", "/media/*"],
+  },
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "gao-mata-cms",
+      // Base créée le 14/10/2026 (région Europe de l’Ouest).
+      "database_id": "b0584e84-f35c-4bcc-9b3b-601633ef6680",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "gao-mata-media" }],
+  "vars": {
+    // Seule liste des comptes autorisés dans l'admin.
+    "ADMIN_EMAILS": "gao.mata87@gmail.com,davidbarbi3r@gmail.com",
+    // Domaine d'équipe Cloudflare Access, ex. https://gaomata.cloudflareaccess.com
+    "ACCESS_TEAM_DOMAIN": "https://davidbarbier.cloudflareaccess.com",
+    // « Application Audience (AUD) Tag » de l’application Access « Admin Gao Mata »
+    // (public : il figure dans chaque jeton Access).
+    "ACCESS_AUD": "4f1556282032e730d1acd45328a8a6b19e99c191f15ac39e2c6fd67bd608d562",
+    // Compte Cloudflare : lu par le build pour interroger D1.
+    "CLOUDFLARE_ACCOUNT_ID": "f74d1954e4a02e96d253e4dd286371b9",
+  },
+}

@@ -1,0 +1,3 @@
+# Copier en .dev.vars pour `npm run dev:admin` (jamais commité).
+# Email simulé : la connexion Cloudflare Access est contournée sur localhost.
+DEV_ADMIN_EMAIL=davidbarbi3r@gmail.com

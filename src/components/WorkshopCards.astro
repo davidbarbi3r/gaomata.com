@@ -1,0 +1,309 @@
+---
+/**
+ * Bloc « Prochains ateliers » de la page d'accueil.
+ * Les ateliers passés depuis le dernier build sont masqués côté navigateur
+ * (src/scripts/past-workshops.ts), et le bloc entier disparaît s'il n'en
+ * reste aucun.
+ */
+import { Image } from 'astro:assets';
+import Lines from './Lines.astro';
+import { mediaUrl } from '../cms/media';
+import {
+  formatWorkshopDate,
+  formatWorkshopTime,
+  lastDay,
+  workshopPath,
+  type Workshop,
+} from '../cms/workshops';
+
+interface Props {
+  workshops: Workshop[];
+  eyebrow: string;
+  title: string;
+  intro: string;
+  cardCta: string;
+}
+
+const { workshops, eyebrow, title, intro, cardCta } = Astro.props;
+const monthFormatter = new Intl.DateTimeFormat('fr-FR', {
+  month: 'short',
+  timeZone: 'UTC',
+});
+---
+
+<section
+  class="section workshops"
+  aria-labelledby="workshops-title"
+  data-workshops
+>
+  <div class="container">
+    <div class="workshops-intro reveal">
+      <span class="eyebrow">{eyebrow}</span>
+      <h2 id="workshops-title">{title}</h2>
+      {intro && (
+        <p class="lead">
+          <Lines text={intro} />
+        </p>
+      )}
+    </div>
+
+    <div class="workshops-grid">
+      {workshops.map((workshop, index) => {
+        const start = new Date(`${workshop.startsOn}T00:00:00Z`);
+        const time = formatWorkshopTime(workshop);
+        return (
+          <article
+            class={`workshop-card reveal reveal-delay-${(index % 3) + 1}`}
+            data-workshop-until={lastDay(workshop)}
+          >
+            <div class="workshop-card__media">
+              {workshop.coverKey && (
+                <Image
+                  src={mediaUrl(workshop.coverKey)}
+                  alt={workshop.coverAlt}
+                  inferSize
+                  widths={[420, 640, 900]}
+                  sizes="(max-width: 52rem) 100vw, 33vw"
+                  quality={82}
+                />
+              )}
+              <span class="workshop-card__day" aria-hidden="true">
+                <strong>{start.getUTCDate()}</strong>
+                <span>{monthFormatter.format(start).replace('.', '')}</span>
+              </span>
+            </div>
+            <div class="workshop-card__body">
+              <p class="workshop-card__meta">
+                <span>{formatWorkshopDate(workshop)}</span>
+                {time && <span>{time}</span>}
+              </p>
+              <h3>
+                <a href={workshopPath(workshop.slug)}>{workshop.title}</a>
+              </h3>
+              <p class="workshop-card__place">{workshop.location}</p>
+              <p class="workshop-card__summary">
+                <Lines text={workshop.summary} />
+              </p>
+              <span class="workshop-card__cta" aria-hidden="true">
+                {cardCta} <span>↗</span>
+              </span>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../scripts/past-workshops';
+</script>
+
+<style>
+  .workshops {
+    background: var(--cream-deep);
+  }
+
+  .workshops-intro {
+    display: grid;
+    align-items: end;
+    margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+    gap: 1.5rem 5rem;
+    grid-template-columns: 1.25fr 0.75fr;
+  }
+
+  .workshops-intro .eyebrow {
+    grid-column: 1 / -1;
+    margin-bottom: -0.6rem;
+  }
+
+  .workshops-intro h2 {
+    max-width: 14ch;
+    margin-bottom: 0;
+  }
+
+  .workshops-intro p {
+    margin-bottom: 0.4rem;
+  }
+
+  .workshops-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  }
+
+  .workshop-card {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--paper);
+    box-shadow: var(--shadow-soft);
+    grid-template-rows: auto 1fr;
+    transition:
+      opacity 900ms var(--ease-out),
+      transform 600ms var(--ease-out);
+  }
+
+  .workshop-card:hover {
+    transform: translateY(-0.4rem);
+  }
+
+  .workshop-card[hidden] {
+    display: none;
+  }
+
+  .workshop-card__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--clay);
+  }
+
+  .workshop-card__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 900ms var(--ease-out);
+  }
+
+  .workshop-card:hover .workshop-card__media :global(img) {
+    transform: scale(1.04);
+  }
+
+  .workshop-card__day {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    display: grid;
+    min-width: 3.6rem;
+    padding: 0.55rem 0.7rem 0.5rem;
+    border-radius: var(--radius-sm);
+    background: var(--paper);
+    color: var(--harbor);
+    line-height: 1;
+    text-align: center;
+  }
+
+  .workshop-card__day strong {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 620;
+    letter-spacing: -0.04em;
+  }
+
+  .workshop-card__day span {
+    margin-top: 0.25rem;
+    font-size: 0.62rem;
+    font-weight: 780;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .workshop-card__body {
+    display: grid;
+    align-content: start;
+    padding: clamp(1.4rem, 3vw, 2rem);
+  }
+
+  .workshop-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 0.8rem;
+    color: var(--amber-deep);
+    font-size: 0.68rem;
+    font-weight: 780;
+    gap: 0.2rem 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .workshop-card h3 {
+    margin-bottom: 0.6rem;
+  }
+
+  .workshop-card h3 a {
+    text-decoration: none;
+  }
+
+  .workshop-card h3 a::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+  }
+
+  .workshop-card h3 a:focus-visible {
+    outline: none;
+  }
+
+  .workshop-card:has(h3 a:focus-visible) {
+    outline: 3px solid var(--harbor);
+    outline-offset: 3px;
+  }
+
+  .workshop-card__place {
+    margin-bottom: 1rem;
+    color: var(--harbor);
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+
+  .workshop-card__summary {
+    margin-bottom: 1.4rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .workshop-card__cta {
+    align-self: end;
+    color: var(--walnut);
+    font-size: 0.86rem;
+    font-weight: 760;
+  }
+
+  .workshop-card__cta span {
+    display: inline-block;
+    transition: transform 400ms var(--ease-out);
+  }
+
+  .workshop-card:hover .workshop-card__cta span {
+    transform: translate(0.2rem, -0.2rem);
+  }
+
+  /* Un seul atelier : carte horizontale, plus large. */
+  @media (min-width: 52.01rem) {
+    .workshop-card:only-child {
+      grid-column: 1 / -1;
+      grid-template-columns: 1.1fr 1fr;
+      grid-template-rows: none;
+    }
+
+    .workshop-card:only-child .workshop-card__media {
+      aspect-ratio: auto;
+      min-height: 24rem;
+    }
+
+    .workshop-card:only-child .workshop-card__media :global(img) {
+      position: absolute;
+      inset: 0;
+    }
+
+    .workshop-card:only-child .workshop-card__body {
+      align-content: center;
+      padding: clamp(2rem, 4vw, 3.5rem);
+    }
+  }
+
+  @media (max-width: 52rem) {
+    .workshops-intro {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .workshop-card,
+    .workshop-card__media :global(img) {
+      transition: none;
+    }
+  }
+</style>

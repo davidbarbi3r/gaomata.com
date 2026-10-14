@@ -3,9 +3,15 @@ interface Props {
   collectiveUrl: string;
   sophrologyUrl: string;
   profileUrl: string;
+  labels: {
+    collectiveTitle: string;
+    collectiveText: string;
+    sophroTitle: string;
+    sophroText: string;
+  };
 }
 
-const { collectiveUrl, sophrologyUrl, profileUrl } = Astro.props;
+const { collectiveUrl, sophrologyUrl, profileUrl, labels } = Astro.props;
 ---
 
 <section
@@ -18,14 +24,14 @@ const { collectiveUrl, sophrologyUrl, profileUrl } = Astro.props;
   <div class="switcher__buttons" role="group" aria-label="Type de réservation">
     <button type="button" data-booking-choice="collectif">
       <span>01</span>
-      <strong>Cours collectifs</strong>
-      <small>Fly Yoga · Souplesse · Ateliers</small>
+      <strong>{labels.collectiveTitle}</strong>
+      <small>{labels.collectiveText}</small>
       <i aria-hidden="true">↓</i>
     </button>
     <button type="button" data-booking-choice="sophrologie">
       <span>02</span>
-      <strong>Sophrologie</strong>
-      <small>Adultes · Enfants · Neuroatypie</small>
+      <strong>{labels.sophroTitle}</strong>
+      <small>{labels.sophroText}</small>
       <i aria-hidden="true">↓</i>
     </button>
   </div>

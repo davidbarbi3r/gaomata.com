@@ -1,23 +1,34 @@
 ---
 import { Image } from 'astro:assets';
-import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BookingEmbed from '../components/BookingEmbed.astro';
+import Lines from '../components/Lines.astro';
 import PageHero from '../components/PageHero.astro';
 import PricingList from '../components/PricingList.astro';
 import flyHero from '../assets/images/fly-2.jpeg';
 import flyKids from '../assets/images/fly-kids.jpeg';
 import flexibility from '../assets/images/souplesse-1.jpeg';
+import { toParagraphs } from '../cms/format';
+import { getContent } from '../cms/load';
 import { breadcrumbSchema, serviceSchema } from '../data/seo';
-import { COLLECTIVE_PRICES, FLY_FORMATS, SITE } from '../data/site';
+import { SITE } from '../data/site';
 
-const entry = await getEntry('pages', 'fly-yoga-souplesse');
-if (!entry) throw new Error('Le contenu Fly Yoga est introuvable.');
-const { data } = entry;
+const content = await getContent();
+const {
+  seo,
+  hero,
+  pratique,
+  formules,
+  souplesse,
+  cadre,
+  tarifs,
+  planning,
+  faq,
+} = content.fly;
 const schemas = [
   serviceSchema(
     'Fly Yoga et souplesse',
-    data.description,
+    seo.description,
     '/fly-yoga-souplesse',
     'Cours de yoga aérien et de souplesse',
   ),
@@ -26,19 +37,24 @@ const schemas = [
     { name: 'Fly Yoga et Souplesse', path: '/fly-yoga-souplesse' },
   ]),
 ];
+const collectiveItems = tarifs.collectiveItems.map((item) => ({
+  label: item.label,
+  note: item.note,
+  price: item.price2 ? [item.price, item.price2] : item.price,
+}));
 ---
 
-<BaseLayout title={data.title} description={data.description} {schemas}>
+<BaseLayout title={seo.title} description={seo.description} {schemas}>
   <PageHero
-    eyebrow={data.eyebrow}
-    title={data.headline}
-    intro={data.intro}
+    eyebrow={hero.eyebrow}
+    title={hero.title}
+    intro={hero.intro}
     image={flyHero}
-    alt="Pratique de Fly Yoga dans un hamac aérien"
+    alt={hero.imageAlt}
     tone="amber"
   >
-    <a class="button button--light" href={data.ctaHref}>
-      {data.ctaLabel}
+    <a class="button button--light" href="#planning">
+      {hero.ctaLabel}
       <span class="button__icon" aria-hidden="true">
         ↗
       </span>
@@ -48,17 +64,17 @@ const schemas = [
   <section class="section fly-intro">
     <div class="container intro-grid">
       <div class="reveal">
-        <span class="eyebrow">La pratique aérienne</span>
-        <h2>{data.sections.flyTitle}</h2>
+        <span class="eyebrow">{pratique.eyebrow}</span>
+        <h2>{pratique.title}</h2>
       </div>
       <div class="intro-text reveal reveal-delay-1">
-        <p class="lead">{data.sections.flyText}</p>
+        <p class="lead">
+          <Lines text={pratique.text} />
+        </p>
         <div class="intro-detail">
-          <span>Avant de s’envoler</span>
+          <span>{pratique.detailLabel}</span>
           <p>
-            Tu prendras toujours le temps de bouger d’abord sans le hamac, pour
-            réveiller, parfois renforcer le corps, avant de t’envoler
-            progressivement.
+            <Lines text={pratique.detailText} />
           </p>
         </div>
       </div>
@@ -68,17 +84,23 @@ const schemas = [
   <section class="section formats" aria-labelledby="formats-title">
     <div class="container">
       <div class="formats-heading reveal">
-        <span class="eyebrow">Six façons d’explorer</span>
-        <h2 id="formats-title">{data.sections.formatsTitle}</h2>
+        <span class="eyebrow">{formules.eyebrow}</span>
+        <h2 id="formats-title">{formules.title}</h2>
       </div>
       <div class="formats-grid">
-        {FLY_FORMATS.map((format, index) => (
+        {formules.items.map((format, index) => (
           <article class={`format-card reveal reveal-delay-${(index % 3) + 1}`}>
-            <span class="format-index">0{index + 1}</span>
-            <span class="pill">{format.marker}</span>
+            <span class="format-index">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            {format.marker && <span class="pill">{format.marker}</span>}
             <div>
               <h3>{format.name}</h3>
-              <p>{format.text}</p>
+              {toParagraphs(format.text).map((paragraph) => (
+                <p>
+                  <Lines text={paragraph} />
+                </p>
+              ))}
             </div>
           </article>
         ))}
@@ -91,21 +113,23 @@ const schemas = [
       <div class="flexibility-media reveal">
         <Image
           src={flexibility}
-          alt="Travail accompagné de souplesse dans un studio lumineux"
+          alt={souplesse.imageAlt}
           widths={[520, 780, 1040]}
           sizes="(max-width: 832px) 100vw, 48vw"
           quality={86}
         />
-        <span>Souplesse active + passive</span>
+        <span>{souplesse.imageCaption}</span>
       </div>
       <div class="flexibility-copy reveal reveal-delay-1">
-        <span class="eyebrow">Explorer ses amplitudes</span>
-        <h2>{data.sections.flexibilityTitle}</h2>
-        <p class="lead">{data.sections.flexibilityText}</p>
+        <span class="eyebrow">{souplesse.eyebrow}</span>
+        <h2>{souplesse.title}</h2>
+        <p class="lead">
+          <Lines text={souplesse.text} />
+        </p>
         <div class="flexibility-list">
-          <span>Aucun niveau requis</span>
-          <span>Chers amis hypermobiles, bienvenus</span>
-          <span>Méthode Sophie Lanka</span>
+          {souplesse.tags.map((tag) => (
+            <span>{tag.text}</span>
+          ))}
         </div>
       </div>
     </div>
@@ -114,11 +138,13 @@ const schemas = [
   <section class="section safety">
     <div class="container safety-grid">
       <div class="safety-copy reveal">
-        <span class="eyebrow">Le cadre</span>
-        <h2>{data.sections.safetyTitle}</h2>
-        <p>{data.sections.safetyText}</p>
+        <span class="eyebrow">{cadre.eyebrow}</span>
+        <h2>{cadre.title}</h2>
+        <p>
+          <Lines text={cadre.text} />
+        </p>
         <a class="button" href="#planning">
-          Voir les cours
+          {cadre.buttonLabel}
           <span class="button__icon" aria-hidden="true">
             ↗
           </span>
@@ -127,14 +153,14 @@ const schemas = [
       <div class="safety-media reveal reveal-delay-1">
         <Image
           src={flyKids}
-          alt="Une jeune participante explore le hamac pendant un cours Fly Kids"
+          alt={cadre.imageAlt}
           widths={[480, 720]}
           sizes="(max-width: 832px) 100vw, 40vw"
           quality={85}
         />
         <div class="safety-badge">
-          <strong>8</strong>
-          <span>personnes maximum en cours Fly</span>
+          <strong>{cadre.badgeNumber}</strong>
+          <span>{cadre.badgeText}</span>
         </div>
       </div>
     </div>
@@ -143,19 +169,20 @@ const schemas = [
   <section class="section prices" aria-labelledby="prices-title">
     <div class="container">
       <div class="prices-heading reveal">
-        <span class="eyebrow">Des formules souples</span>
-        <h2 id="prices-title">{data.sections.pricesTitle}</h2>
+        <span class="eyebrow">{tarifs.eyebrow}</span>
+        <h2 id="prices-title">{tarifs.title}</h2>
       </div>
       <div class="prices-grid">
         <PricingList
-          title="Cours collectifs Fly"
-          items={COLLECTIVE_PRICES.fly.map((item) => ({ ...item }))}
-          note="Sur réservation · 8 personnes maximum"
+          title={tarifs.collectiveTitle}
+          items={collectiveItems}
+          columns={[tarifs.collectiveColumn1, tarifs.collectiveColumn2]}
+          note={tarifs.collectiveNote}
         />
         <PricingList
-          title="Souplesse & cours particuliers"
-          items={COLLECTIVE_PRICES.flexibility.map((item) => ({ ...item }))}
-          note="Pratique collective ou accompagnement personnalisé"
+          title={tarifs.workshopsTitle}
+          items={tarifs.workshopsItems}
+          note={tarifs.workshopsNote}
           tone="cream"
         />
       </div>
@@ -166,10 +193,10 @@ const schemas = [
     <div class="container reveal">
       <BookingEmbed
         id="planning-collectif"
-        title="Le planning des cours"
-        description="Choisis directement ton cours de Fly Yoga, de souplesse ou ton prochain atelier."
+        title={planning.title}
+        description={planning.description}
         embedUrl={SITE.collectiveEmbed}
-        profileUrl={SITE.bookingProfile}
+        profileUrl={content.commun.contact.bookingProfile}
         buttonLabel="Afficher le planning"
         tone="amber"
         autoLoad
@@ -181,17 +208,21 @@ const schemas = [
   <section class="section faq">
     <div class="narrow">
       <div class="faq-heading reveal">
-        <span class="eyebrow">Avant de venir</span>
-        <h2>Les questions les plus fréquentes.</h2>
+        <span class="eyebrow">{faq.eyebrow}</span>
+        <h2>{faq.title}</h2>
       </div>
       <div class="faq-list">
-        {data.faqs.map((faq, index) => (
+        {faq.items.map((item, index) => (
           <details class="reveal">
             <summary>
-              <span>0{index + 1}</span>
-              {faq.question}
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              {item.question}
             </summary>
-            <p>{faq.answer}</p>
+            {toParagraphs(item.answer).map((paragraph) => (
+              <p>
+                <Lines text={paragraph} />
+              </p>
+            ))}
           </details>
         ))}
       </div>
@@ -298,6 +329,10 @@ const schemas = [
   .format-card p {
     margin-bottom: 0;
     color: rgb(255 255 255 / 65%);
+  }
+
+  .format-card p + p {
+    margin-top: 0.8rem;
   }
 
   .flexibility {

@@ -94,3 +94,18 @@ test('Aurarios reste déchargé avant le consentement puis reçoit son URL', asy
     'https://www.aurarios.fr/embed/gao-mata',
   );
 });
+
+test('sans atelier à venir, la page d’accueil n’affiche aucun bloc ateliers', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(page.locator('[data-workshops]')).toHaveCount(0);
+});
+
+test('l’espace admin n’est pas indexé', async ({ page }) => {
+  await page.goto('/admin');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    /noindex/,
+  );
+});

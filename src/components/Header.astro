@@ -1,13 +1,15 @@
 ---
 import { Image } from 'astro:assets';
 import logoGreen from '../assets/brand/logo-gaomata-vert.png';
+import { getContent } from '../cms/load';
 import { SITE } from '../data/site';
 
+const { header, contact } = (await getContent()).commun;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const links = [
-  { href: '/fly-yoga-souplesse', label: 'Fly & Souplesse' },
-  { href: '/sophrologie-neuroatypie', label: 'Sophrologie' },
-  { href: '/a-propos', label: 'À propos' },
+  { href: '/fly-yoga-souplesse', label: header.navFly },
+  { href: '/sophrologie-neuroatypie', label: header.navSophro },
+  { href: '/a-propos', label: header.navAbout },
 ];
 ---
 
@@ -28,7 +30,7 @@ const links = [
       </span>
       <span>
         <strong>{SITE.name}</strong>
-        <small>Corps · Souffle · Singularité</small>
+        <small>{header.tagline}</small>
       </span>
     </a>
 
@@ -44,7 +46,7 @@ const links = [
     </nav>
 
     <a class="header-cta" href="/reserver">
-      Réserver
+      {header.cta}
       <span aria-hidden="true">↗</span>
     </a>
 
@@ -66,11 +68,11 @@ const links = [
       {links.map((link) => (
         <a href={link.href}>{link.label}</a>
       ))}
-      <a href="/reserver">Réserver une séance</a>
+      <a href="/reserver">{header.mobileCta}</a>
     </nav>
     <div class="menu-meta">
-      <span>Boisseuil · Limoges</span>
-      <a href="mailto:gao.mata87@gmail.com">gao.mata87@gmail.com</a>
+      <span>{header.mobileMeta}</span>
+      <a href={`mailto:${contact.email}`}>{contact.email}</a>
     </div>
   </div>
 </header>

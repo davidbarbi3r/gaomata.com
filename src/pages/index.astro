@@ -1,29 +1,36 @@
 ---
 import { Image } from 'astro:assets';
-import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import BrandText from '../components/BrandText.astro';
+import Lines from '../components/Lines.astro';
 import Testimonial from '../components/Testimonial.astro';
+import WorkshopCards from '../components/WorkshopCards.astro';
 import flexibility from '../assets/images/souplesse.jpeg';
 import heroImage from '../assets/images/souplesse-1.jpeg';
+import { getContent, getWorkshops } from '../cms/load';
+import { isUpcoming } from '../cms/workshops';
 import { websiteSchema } from '../data/seo';
-import { LOCATIONS, SITE, TESTIMONIALS } from '../data/site';
 
-const entry = await getEntry('pages', 'accueil');
-if (!entry) throw new Error('Le contenu de la page accueil est introuvable.');
-const { data } = entry;
+const content = await getContent();
+const { seo, hero, choix, ateliers, methode, temoignages, lieux } =
+  content.accueil;
+const places = content.commun.lieux.items;
+const upcoming = (await getWorkshops()).filter((workshop) =>
+  isUpcoming(workshop),
+);
 const testimonialTones = ['clay', 'harbor', 'cream'] as const;
 ---
 
 <BaseLayout
-  title={data.title}
-  description={data.description}
+  title={seo.title}
+  description={seo.description}
   schemas={[websiteSchema]}
 >
   <section class="home-hero">
     <div class="hero-visual">
       <Image
         src={heroImage}
-        alt="Exploration de la souplesse sur une plage au coucher du soleil"
+        alt={hero.imageAlt}
         widths={[640, 960, 1280, 1600]}
         sizes="100vw"
         loading="eager"
@@ -32,22 +39,26 @@ const testimonialTones = ['clay', 'harbor', 'cream'] as const;
       <div class="hero-copy">
         <div class="container hero-copy__grid">
           <div class="hero-title">
-            <span class="eyebrow">{data.eyebrow}</span>
+            <span class="eyebrow">
+              <BrandText text={hero.eyebrow} />
+            </span>
             <h1>
-              Au service<br />de l’atypique.
+              <Lines text={hero.title} />
             </h1>
           </div>
           <div class="hero-intro">
-            <p>{data.intro}</p>
+            <p>
+              <Lines text={hero.intro} />
+            </p>
             <div class="cluster">
-              <a class="button button--light" href={data.ctaHref}>
-                {data.ctaLabel}
+              <a class="button button--light" href="/reserver">
+                {hero.ctaLabel}
                 <span class="button__icon" aria-hidden="true">
                   ↗
                 </span>
               </a>
               <a class="text-link" href="/a-propos">
-                Me rencontrer
+                {hero.secondaryLabel}
               </a>
             </div>
           </div>
@@ -59,18 +70,22 @@ const testimonialTones = ['clay', 'harbor', 'cream'] as const;
   <section class="section choices" aria-labelledby="choices-title">
     <div class="container">
       <div class="choices-intro reveal">
-        <span class="eyebrow">Choisir son élan</span>
-        <h2 id="choices-title">{data.sections.choiceTitle}</h2>
-        <p class="lead">{data.sections.choiceIntro}</p>
+        <span class="eyebrow">{choix.eyebrow}</span>
+        <h2 id="choices-title">{choix.title}</h2>
+        <p class="lead">
+          <Lines text={choix.intro} />
+        </p>
       </div>
 
       <div class="choices-grid">
         <a class="choice choice--fly reveal" href="/fly-yoga-souplesse">
           <span class="choice-number">01</span>
           <div>
-            <span class="choice-label">Fly Yoga · Souplesse</span>
-            <h3>{data.sections.flyTitle}</h3>
-            <p>{data.sections.flyText}</p>
+            <span class="choice-label">{choix.flyLabel}</span>
+            <h3>{choix.flyTitle}</h3>
+            <p>
+              <Lines text={choix.flyText} />
+            </p>
           </div>
           <span class="choice-arrow" aria-hidden="true">
             ↗
@@ -83,9 +98,11 @@ const testimonialTones = ['clay', 'harbor', 'cream'] as const;
         >
           <span class="choice-number">02</span>
           <div>
-            <span class="choice-label">Sophrologie · Neuroatypie</span>
-            <h3>{data.sections.sophroTitle}</h3>
-            <p>{data.sections.sophroText}</p>
+            <span class="choice-label">{choix.sophroLabel}</span>
+            <h3>{choix.sophroTitle}</h3>
+            <p>
+              <Lines text={choix.sophroText} />
+            </p>
           </div>
           <span class="choice-arrow" aria-hidden="true">
             ↗
@@ -95,28 +112,36 @@ const testimonialTones = ['clay', 'harbor', 'cream'] as const;
     </div>
   </section>
 
+  {upcoming.length > 0 && (
+    <WorkshopCards
+      workshops={upcoming}
+      eyebrow={ateliers.eyebrow}
+      title={ateliers.title}
+      intro={ateliers.intro}
+      cardCta={ateliers.cardCta}
+    />
+  )}
+
   <section class="section method">
     <div class="container method-grid">
       <div class="method-copy reveal">
-        <span class="eyebrow">La méthode <span class="brand-name">{SITE.name}</span></span>
-        <h2>{data.sections.methodTitle}</h2>
-        <p class="lead">{data.sections.methodText}</p>
+        <span class="eyebrow">
+          <BrandText text={methode.eyebrow} />
+        </span>
+        <h2>{methode.title}</h2>
+        <p class="lead">
+          <Lines text={methode.text} />
+        </p>
         <div class="method-points">
-          <div>
-            <strong>01</strong>
-            <span>Le Fly, et toutes ses déclinaisons</span>
-          </div>
-          <div>
-            <strong>02</strong>
-            <span>La souplesse, active et passive</span>
-          </div>
-          <div>
-            <strong>03</strong>
-            <span>La sophrologie, au fil de l’élan du jour</span>
-          </div>
+          {methode.points.map((point, index) => (
+            <div>
+              <strong>{String(index + 1).padStart(2, '0')}</strong>
+              <span>{point.text}</span>
+            </div>
+          ))}
         </div>
         <a class="button button--light" href="/a-propos">
-          Découvrir l’approche
+          {methode.buttonLabel}
           <span class="button__icon" aria-hidden="true">
             ↗
           </span>
@@ -125,12 +150,12 @@ const testimonialTones = ['clay', 'harbor', 'cream'] as const;
       <div class="method-visual reveal reveal-delay-1">
         <Image
           src={flexibility}
-          alt="Marion accompagne une élève pendant un travail de souplesse"
+          alt={methode.imageAlt}
           widths={[480, 720, 960]}
           sizes="(max-width: 832px) 100vw, 45vw"
           quality={85}
         />
-        <span class="method-caption">Respecter · Ajuster · Encourager</span>
+        <span class="method-caption">{methode.caption}</span>
       </div>
     </div>
   </section>
@@ -138,29 +163,29 @@ const testimonialTones = ['clay', 'harbor', 'cream'] as const;
   <section class="section testimonials" aria-labelledby="proof-title">
     <div class="container">
       <div class="proof-heading reveal">
-        <span class="eyebrow">Vos mots</span>
-        <h2 id="proof-title">{data.sections.proofTitle}</h2>
+        <span class="eyebrow">{temoignages.eyebrow}</span>
+        <h2 id="proof-title">{temoignages.title}</h2>
       </div>
     </div>
     <div class="proof-marquee" data-marquee>
       <div class="proof-marquee__inner">
         <div class="proof-marquee__track">
-          {TESTIMONIALS.map((item, index) => (
+          {temoignages.items.map((item, index) => (
             <Testimonial
               quote={item.quote}
               author={item.author}
-              index={`0${index + 1}`}
+              index={String(index + 1).padStart(2, '0')}
               tone={testimonialTones[index % testimonialTones.length]}
               compact
             />
           ))}
         </div>
         <div class="proof-marquee__track" aria-hidden="true">
-          {TESTIMONIALS.map((item, index) => (
+          {temoignages.items.map((item, index) => (
             <Testimonial
               quote={item.quote}
               author={item.author}
-              index={`0${index + 1}`}
+              index={String(index + 1).padStart(2, '0')}
               tone={testimonialTones[index % testimonialTones.length]}
               compact
             />
@@ -173,17 +198,21 @@ const testimonialTones = ['clay', 'harbor', 'cream'] as const;
   <section class="section locations">
     <div class="container location-grid">
       <div class="location-heading reveal">
-        <span class="eyebrow">En Haute-Vienne</span>
-        <h2>{data.sections.locationTitle}</h2>
+        <span class="eyebrow">{lieux.eyebrow}</span>
+        <h2>{lieux.title}</h2>
       </div>
       <div class="location-list">
-        {LOCATIONS.map((location, index) => (
-          <article class={`location-row reveal reveal-delay-${index + 1}`}>
-            <span>0{index + 1}</span>
+        {places.map((location, index) => (
+          <article
+            class={`location-row reveal reveal-delay-${(index % 3) + 1}`}
+          >
+            <span>{String(index + 1).padStart(2, '0')}</span>
             <div>
               <h3>{location.city}</h3>
               <strong>{location.name}</strong>
-              <p>{location.detail}</p>
+              <p>
+                <Lines text={location.detail} />
+              </p>
             </div>
           </article>
         ))}

@@ -1,13 +1,15 @@
 ---
-import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Lines from '../components/Lines.astro';
 import ReservationSwitcher from '../components/ReservationSwitcher.astro';
+import { phoneHref } from '../cms/format';
+import { getContent } from '../cms/load';
 import { breadcrumbSchema } from '../data/seo';
 import { SITE } from '../data/site';
 
-const entry = await getEntry('pages', 'reserver');
-if (!entry) throw new Error('Le contenu Réserver est introuvable.');
-const { data } = entry;
+const content = await getContent();
+const { seo, hero, choix, premiere, aide } = content.reserver;
+const { contact } = content.commun;
 const schemas = [
   breadcrumbSchema([
     { name: 'Accueil', path: '/' },
@@ -16,21 +18,26 @@ const schemas = [
 ];
 ---
 
-<BaseLayout title={data.title} description={data.description} {schemas}>
+<BaseLayout title={seo.title} description={seo.description} {schemas}>
   <section class="book-hero" id="choisir">
     <div class="container">
       <div class="book-hero__copy">
         <div>
-          <span class="eyebrow">{data.eyebrow}</span>
-          <h1>{data.headline}</h1>
+          <span class="eyebrow">{hero.eyebrow}</span>
+          <h1>
+            <Lines text={hero.title} />
+          </h1>
         </div>
-        <p>{data.intro}</p>
+        <p>
+          <Lines text={hero.intro} />
+        </p>
       </div>
 
       <ReservationSwitcher
         collectiveUrl={SITE.collectiveEmbed}
         sophrologyUrl={SITE.sophrologyEmbed}
-        profileUrl={SITE.bookingProfile}
+        profileUrl={contact.bookingProfile}
+        labels={choix}
       />
     </div>
   </section>
@@ -39,14 +46,16 @@ const schemas = [
     <div class="narrow first-card reveal">
       <span class="first-index">01</span>
       <div>
-        <span class="eyebrow">Sophrologie</span>
-        <h2>{data.sections.firstAppointmentTitle}</h2>
-        <p>{data.sections.firstAppointmentText}</p>
+        <span class="eyebrow">{premiere.eyebrow}</span>
+        <h2>{premiere.title}</h2>
+        <p>
+          <Lines text={premiere.text} />
+        </p>
         <a
           class="button"
-          href={`mailto:${SITE.email}?subject=Première%20séance%20de%20sophrologie`}
+          href={`mailto:${contact.email}?subject=Première%20séance%20de%20sophrologie`}
         >
-          M’écrire
+          {premiere.buttonLabel}
           <span class="button__icon" aria-hidden="true">
             ↗
           </span>
@@ -58,23 +67,23 @@ const schemas = [
   <section class="section contact-band">
     <div class="container contact-grid">
       <div class="reveal">
-        <span class="eyebrow">Besoin d’être guidé·e ?</span>
-        <h2>{data.sections.helpTitle}</h2>
+        <span class="eyebrow">{aide.eyebrow}</span>
+        <h2>{aide.title}</h2>
       </div>
       <div class="contact-links reveal reveal-delay-1">
-        <a href={`mailto:${SITE.email}`}>
-          <span>Email</span>
-          <strong>{SITE.email}</strong>
+        <a href={`mailto:${contact.email}`}>
+          <span>{aide.emailLabel}</span>
+          <strong>{contact.email}</strong>
           <i aria-hidden="true">↗</i>
         </a>
-        <a href={SITE.phoneHref}>
-          <span>Téléphone</span>
-          <strong>{SITE.phoneDisplay}</strong>
+        <a href={phoneHref(contact.phone)}>
+          <span>{aide.phoneLabel}</span>
+          <strong>{contact.phone}</strong>
           <i aria-hidden="true">↗</i>
         </a>
-        <a href={SITE.bookingProfile} target="_blank" rel="noreferrer">
-          <span>Réservation externe</span>
-          <strong>Profil Aurarios</strong>
+        <a href={contact.bookingProfile} target="_blank" rel="noreferrer">
+          <span>{aide.bookingLabel}</span>
+          <strong>{aide.bookingName}</strong>
           <i aria-hidden="true">↗</i>
         </a>
       </div>

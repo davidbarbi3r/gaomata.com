@@ -1,0 +1,356 @@
+---
+/** Page d'un atelier publié (créé dans l'admin, stocké dans D1). */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Lines from '../../components/Lines.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getContent, getWorkshops } from '../../cms/load';
+import { mediaUrl } from '../../cms/media';
+import {
+  formatWorkshopDate,
+  formatWorkshopTime,
+  isUpcoming,
+  lastDay,
+  workshopPath,
+  type Workshop,
+} from '../../cms/workshops';
+import { breadcrumbSchema, eventSchema } from '../../data/seo';
+import heroFallback from '../../assets/images/fly-evenement-1.jpeg';
+
+export async function getStaticPaths() {
+  const workshops = await getWorkshops();
+  return workshops.map((workshop) => ({
+    params: { slug: workshop.slug },
+    props: { workshop },
+  }));
+}
+
+interface Props {
+  workshop: Workshop;
+}
+
+const { workshop } = Astro.props;
+const content = await getContent();
+const { contact } = content.commun;
+const { page, contact: question } = content.ateliers;
+const path = workshopPath(workshop.slug);
+const date = formatWorkshopDate(workshop);
+const time = formatWorkshopTime(workshop);
+const past = !isUpcoming(workshop);
+const cover = workshop.coverKey ? mediaUrl(workshop.coverKey) : undefined;
+const external = Boolean(workshop.bookingUrl);
+const bookingHref =
+  workshop.bookingUrl ||
+  `mailto:${contact.email}?subject=${encodeURIComponent(workshop.title)}`;
+const bookingLabel = external
+  ? workshop.bookingLabel || page.bookingLabel
+  : page.emailBookingLabel;
+const bookingLinkProps = external
+  ? { target: '_blank', rel: 'noopener noreferrer' }
+  : {};
+const description =
+  workshop.summary.length > 160
+    ? `${workshop.summary.slice(0, 157).trimEnd()}…`
+    : workshop.summary;
+const schemas = [
+  eventSchema({ ...workshop, image: cover }),
+  breadcrumbSchema([
+    { name: 'Accueil', path: '/' },
+    { name: workshop.title, path },
+  ]),
+];
+const facts = [
+  { label: page.dateLabel, value: date },
+  { label: page.timeLabel, value: time },
+  { label: page.placeLabel, value: workshop.location },
+  { label: page.priceLabel, value: workshop.price },
+].filter((fact) => fact.value);
+---
+
+<BaseLayout
+  title={`${workshop.title} · ${date}`}
+  {description}
+  image={cover}
+  {schemas}
+>
+  <PageHero
+    eyebrow={`${page.eyebrow} · ${date}`}
+    title={workshop.title}
+    intro={workshop.summary}
+    image={cover ?? heroFallback}
+    alt={workshop.coverAlt}
+    tone="sienna"
+  >
+    <div class="workshop-hero-actions" data-booking>
+      <a class="button button--light" href={bookingHref} {...bookingLinkProps}>
+        {bookingLabel}
+        <span class="button__icon" aria-hidden="true">
+          ↗
+        </span>
+      </a>
+      <a class="text-link" href="#infos">
+        {page.infosTitle}
+      </a>
+    </div>
+  </PageHero>
+
+  <p
+    class="past-notice"
+    data-past-notice
+    data-until={lastDay(workshop)}
+    hidden={!past}
+  >
+    {page.pastNotice} <a href="/">{page.pastLink}</a>
+  </p>
+
+  <section class="section workshop-detail" id="infos">
+    <div class="container workshop-grid">
+      <div class="workshop-text">
+        {workshop.bodyHtml ? (
+          <div class="workshop-prose" set:html={workshop.bodyHtml} />
+        ) : (
+          <p class="lead">
+            <Lines text={workshop.summary} />
+          </p>
+        )}
+      </div>
+
+      <aside class="workshop-aside">
+        <div class="workshop-facts">
+          <span class="eyebrow">{page.infosTitle}</span>
+          <dl>
+            {facts.map((fact) => (
+              <div>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <a
+            class="button"
+            href={bookingHref}
+            data-booking
+            {...bookingLinkProps}
+          >
+            {bookingLabel}
+            <span class="button__icon" aria-hidden="true">
+              ↗
+            </span>
+          </a>
+        </div>
+
+        {workshop.programHtml && (
+          <div class="workshop-program">
+            <span class="eyebrow">{page.programTitle}</span>
+            <div class="workshop-prose" set:html={workshop.programHtml} />
+          </div>
+        )}
+      </aside>
+    </div>
+  </section>
+
+  <section class="section workshop-contact">
+    <div class="narrow">
+      <span class="eyebrow">{question.eyebrow}</span>
+      <h2>{question.title}</h2>
+      <p class="lead">
+        <Lines text={question.text} />
+      </p>
+      <div class="cluster">
+        <a
+          class="button"
+          href={`mailto:${contact.email}?subject=${encodeURIComponent(workshop.title)}`}
+        >
+          {question.buttonLabel}
+          <span class="button__icon" aria-hidden="true">
+            ↗
+          </span>
+        </a>
+        <a class="text-link" href="/">
+          {question.backLabel}
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import '../../scripts/past-workshops';
+</script>
+
+<style>
+  .workshop-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .workshop-hero-actions .text-link {
+    color: var(--white);
+  }
+
+  [data-booking][hidden] {
+    display: none;
+  }
+
+  .past-notice {
+    margin: 0;
+    padding: 1rem;
+    background: var(--walnut);
+    color: var(--white);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .past-notice[hidden] {
+    display: none;
+  }
+
+  .workshop-grid {
+    display: grid;
+    align-items: start;
+    gap: clamp(2.5rem, 6vw, 6rem);
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 25rem);
+  }
+
+  .workshop-text {
+    max-width: 44rem;
+  }
+
+  .workshop-aside {
+    position: sticky;
+    top: 7rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .workshop-facts,
+  .workshop-program {
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    border-radius: var(--radius-lg);
+  }
+
+  .workshop-facts {
+    background: var(--paper);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .workshop-program {
+    background: var(--cream-deep);
+  }
+
+  .workshop-facts dl {
+    display: grid;
+    margin: 0 0 1.75rem;
+    gap: 1rem;
+  }
+
+  .workshop-facts dl div {
+    display: grid;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgb(75 46 32 / 11%);
+    gap: 0.15rem;
+  }
+
+  .workshop-facts dt {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 780;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .workshop-facts dd {
+    margin: 0;
+    color: var(--harbor);
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 560;
+    line-height: 1.25;
+  }
+
+  .workshop-facts dd::first-letter {
+    text-transform: uppercase;
+  }
+
+  .workshop-prose :global(> * + *) {
+    margin-top: 1em;
+  }
+
+  .workshop-prose :global(p),
+  .workshop-prose :global(li) {
+    color: var(--ink);
+    font-size: 1.05rem;
+    line-height: 1.75;
+  }
+
+  .workshop-prose :global(h2) {
+    margin: 1.6em 0 0.5em;
+  }
+
+  .workshop-prose :global(h3) {
+    margin: 1.4em 0 0.4em;
+  }
+
+  .workshop-prose :global(h2:first-child),
+  .workshop-prose :global(h3:first-child) {
+    margin-top: 0;
+  }
+
+  .workshop-prose :global(ul),
+  .workshop-prose :global(ol) {
+    padding-left: 1.3rem;
+  }
+
+  .workshop-prose :global(li + li) {
+    margin-top: 0.4em;
+  }
+
+  .workshop-prose :global(li::marker) {
+    color: var(--amber);
+  }
+
+  .workshop-prose :global(blockquote) {
+    margin: 1.5em 0;
+    padding-left: 1.25rem;
+    border-left: 3px solid var(--clay);
+    color: var(--walnut);
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .workshop-prose :global(a) {
+    color: var(--amber-deep);
+    font-weight: 700;
+  }
+
+  .workshop-program .workshop-prose :global(p),
+  .workshop-program .workshop-prose :global(li) {
+    font-size: 0.98rem;
+  }
+
+  .workshop-contact {
+    background: var(--cream-deep);
+    text-align: left;
+  }
+
+  .workshop-contact h2 {
+    margin-bottom: 1rem;
+  }
+
+  .workshop-contact .lead {
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 52rem) {
+    .workshop-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .workshop-aside {
+      position: static;
+    }
+  }
+</style>

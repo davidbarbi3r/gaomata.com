@@ -2,8 +2,11 @@
 import { Image } from 'astro:assets';
 import logoWhite from '../assets/brand/logo-gaomata-blanc.png';
 import logoGreen from '../assets/brand/logo-gaomata-vert.png';
+import { getContent } from '../cms/load';
+import { phoneHref } from '../cms/format';
 import { SITE } from '../data/site';
 
+const { footer, contact } = (await getContent()).commun;
 const year = new Date().getFullYear();
 ---
 
@@ -21,11 +24,11 @@ const year = new Date().getFullYear();
         quality={100}
       />
       <div>
-        <span class="eyebrow">Faire le premier pas</span>
-        <h2>Et si tu venais explorer&nbsp;?</h2>
+        <span class="eyebrow">{footer.ctaEyebrow}</span>
+        <h2>{footer.ctaTitle}</h2>
       </div>
       <a class="button button--light" href="/reserver">
-        Choisir ma séance
+        {footer.ctaButton}
         <span class="button__icon" aria-hidden="true">
           ↗
         </span>
@@ -46,36 +49,49 @@ const year = new Date().getFullYear();
           />
           <span>{SITE.name}</span>
         </a>
-        <p>
-          Une pédagogie peu conventionnelle, au service de l’atypique.
-        </p>
+        <p>{footer.tagline}</p>
       </div>
 
       <div class="footer-group">
-        <strong>Explorer</strong>
-        <a href="/fly-yoga-souplesse">Fly Yoga & Souplesse</a>
-        <a href="/sophrologie-neuroatypie">Sophrologie</a>
-        <a href="/a-propos">Qui je suis</a>
-        <a href="/reserver">Réserver</a>
+        <strong>{footer.exploreTitle}</strong>
+        <a href="/fly-yoga-souplesse">{footer.linkFly}</a>
+        <a href="/sophrologie-neuroatypie">{footer.linkSophro}</a>
+        <a href="/a-propos">{footer.linkAbout}</a>
+        <a href="/reserver">{footer.linkBooking}</a>
       </div>
 
       <div class="footer-group">
-        <strong>Venir</strong>
-        <span>Boisseuil</span>
-        <span>Limoges</span>
-        <a href="tel:+33609050001">06 09 05 00 01</a>
-        <a href="mailto:gao.mata87@gmail.com">gao.mata87@gmail.com</a>
+        <strong>{footer.visitTitle}</strong>
+        {footer.visitPlaces.map((place) => (
+          <span>{place.text}</span>
+        ))}
+        <a href={phoneHref(contact.phone)}>{contact.phone}</a>
+        <a href={`mailto:${contact.email}`}>{contact.email}</a>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <span>© {year} {SITE.name}</span>
-      <span>Yoga aérien · Souplesse · Sophrologie</span>
-      <a href="/mentions-legales">Mentions légales & confidentialité</a>
+      <span>
+        © {year} {SITE.name}
+      </span>
+      <span>{footer.bottomTagline}</span>
+      <a href="/mentions-legales">{footer.legalLink}</a>
     </div>
-    <p class="footer-credit">
-      développé par <a href="https://www.davidbarbier.com" rel="noopener noreferrer">David</a>
-    </p>
+    <div class="footer-credit">
+      <a class="footer-admin" href="/admin" rel="nofollow">
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <rect x="3" y="7" width="10" height="7" rx="1.5"></rect>
+          <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"></path>
+        </svg>
+        {footer.adminLink}
+      </a>
+      <p>
+        développé par{' '}
+        <a href="https://www.davidbarbier.com" rel="noopener noreferrer">
+          David
+        </a>
+      </p>
+    </div>
   </div>
 </footer>
 
@@ -193,20 +209,56 @@ const year = new Date().getFullYear();
   }
 
   .footer-credit {
-    margin: 0.7rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.7rem;
     color: var(--muted);
     font-size: 0.56rem;
+    gap: 0.7rem;
     letter-spacing: 0.04em;
-    text-align: right;
   }
 
-  .footer-credit a {
+  .footer-credit p {
+    margin: 0;
+  }
+
+  .footer-credit .footer-admin {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    padding: 0.3rem 0.65rem;
+    border: 1px solid rgb(75 46 32 / 18%);
+    border-radius: var(--radius-pill);
+    font-size: 0.6rem;
+    font-weight: 700;
+    gap: 0.35rem;
+    transition:
+      border-color 200ms ease,
+      color 200ms ease;
+  }
+
+  .footer-admin svg {
+    width: 0.75rem;
+    height: 0.75rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-width: 1.4;
+  }
+
+  .footer-credit .footer-admin:hover {
+    border-color: var(--walnut);
+  }
+
+  .footer-credit p a {
     margin-inline-start: 0.35em;
     color: inherit;
     text-decoration: none;
   }
 
-  .footer-credit a:hover {
+  .footer-credit p a:hover {
     color: var(--walnut);
   }
 

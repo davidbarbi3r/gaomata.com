@@ -1,7 +1,7 @@
 ---
 interface PriceItem {
   label: string;
-  price: string;
+  price: string | readonly string[];
   note?: string;
 }
 
@@ -9,10 +9,12 @@ interface Props {
   title: string;
   items: PriceItem[];
   note?: string;
+  columns?: string[];
   tone?: 'paper' | 'cream';
 }
 
-const { title, items, note, tone = 'paper' } = Astro.props;
+const { title, items, note, columns = [], tone = 'paper' } = Astro.props;
+const priceColumns = Math.max(columns.length, 1);
 ---
 
 <section class={`pricing pricing--${tone}`}>
@@ -20,14 +22,31 @@ const { title, items, note, tone = 'paper' } = Astro.props;
     <h3>{title}</h3>
     {note && <p>{note}</p>}
   </div>
-  <div class="pricing__items">
+  <div class="pricing__items" style={`--price-columns: ${priceColumns}`}>
+    {columns.length > 0 && (
+      <div class="pricing__row pricing__row--columns" aria-hidden="true">
+        <span></span>
+        {columns.map((column) => (
+          <span>{column}</span>
+        ))}
+      </div>
+    )}
     {items.map((item) => (
       <div class="pricing__row">
         <div>
           <strong>{item.label}</strong>
           {item.note && <small>{item.note}</small>}
         </div>
-        <span>{item.price}</span>
+        {typeof item.price === 'string' ? (
+          <span class="pricing__price pricing__price--span">{item.price}</span>
+        ) : (
+          item.price.map((price, index) => (
+            <span class="pricing__price">
+              {price}
+              {columns[index] && <span class="sr-only"> {columns[index]}</span>}
+            </span>
+          ))
+        )}
       </div>
     ))}
   </div>
@@ -72,7 +91,21 @@ const { title, items, note, tone = 'paper' } = Astro.props;
     padding: 1.15rem clamp(1.6rem, 4vw, 3rem);
     border-bottom: 1px solid rgb(75 46 32 / 9%);
     gap: 1rem;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr repeat(var(--price-columns), auto);
+  }
+
+  .pricing__row--columns {
+    padding-block: 0.9rem 0.4rem;
+    border-bottom: 0;
+  }
+
+  .pricing__row--columns > span {
+    color: var(--muted);
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-align: right;
+    text-transform: uppercase;
   }
 
   .pricing__row:last-child {
@@ -94,10 +127,16 @@ const { title, items, note, tone = 'paper' } = Astro.props;
     font-size: 0.68rem;
   }
 
-  .pricing__row > span {
+  .pricing__price {
     color: var(--harbor);
+    text-align: right;
+    white-space: nowrap;
     font-family: var(--font-display);
     font-size: 1.35rem;
     font-weight: 620;
+  }
+
+  .pricing__price--span {
+    grid-column: 2 / -1;
   }
 </style>

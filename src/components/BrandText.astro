@@ -1,0 +1,17 @@
+---
+/** Met en forme le nom « Gao Mata » quand il apparaît dans un texte. */
+import { SITE } from '../data/site';
+
+interface Props {
+  text: string;
+}
+
+const parts = Astro.props.text.split(SITE.name);
+---
+
+{parts.map((part, index) => (
+  <>
+    {part}
+    {index < parts.length - 1 && <span class="brand-name">{SITE.name}</span>}
+  </>
+))}

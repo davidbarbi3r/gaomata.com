@@ -7,15 +7,19 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "dev:admin": "node scripts/dev-admin.mjs",
+    "build": "astro check && npm run check:worker && astro build",
     "preview": "astro preview",
-    "check": "astro check",
+    "check": "astro check && npm run check:worker",
+    "check:worker": "tsc -p worker/tsconfig.json",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "playwright test",
     "test:install": "playwright install chromium",
-    "verify": "npm run format:check && npm run lint && npm run build && npm run test"
+    "verify": "npm run format:check && npm run lint && npm run build && npm run test",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote"
   },
   "keywords": [
     "fly yoga",
@@ -27,21 +31,32 @@
   "author": "Gao Mata",
   "license": "UNLICENSED",
   "dependencies": {
+    "@astrojs/preact": "^6.0.6",
     "@astrojs/sitemap": "^3.7.4",
     "@fontsource-variable/fraunces": "^5.3.0",
     "@fontsource-variable/manrope": "^5.3.0",
-    "astro": "^7.3.3"
+    "@tiptap/core": "^3.32.0",
+    "@tiptap/pm": "^3.32.0",
+    "@tiptap/starter-kit": "^3.32.0",
+    "astro": "^7.3.3",
+    "jose": "^6.2.12",
+    "preact": "^10.29.8",
+    "sanitize-html": "^2.18.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@axe-core/playwright": "^4.13.0",
+    "@cloudflare/workers-types": "^5.20261014.1",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
+    "@types/sanitize-html": "^2.16.2",
     "eslint": "^10.11.0",
     "eslint-plugin-astro": "^1.7.0",
+    "globals": "^17.13.0",
     "prettier": "^3.9.8",
     "prettier-plugin-astro": "^1.0.1",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.0"
+    "typescript-eslint": "^8.70.0",
+    "wrangler": "^4.151.0"
   }
 }

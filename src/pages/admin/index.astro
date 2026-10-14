@@ -1,0 +1,27 @@
+---
+/**
+ * Espace d'administration. La page est statique ; l'application se charge
+ * dans le navigateur et parle à l'API /api/admin du Worker (worker/).
+ * En production, /admin et /api/admin sont protégés par Cloudflare Access.
+ */
+import '@fontsource-variable/fraunces/wght.css';
+import '@fontsource-variable/manrope/wght.css';
+import '../../admin/admin.css';
+import App from '../../admin/App';
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#FFFAF2" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <title>Espace admin | Gao Mata</title>
+  </head>
+  <body>
+    <App client:only="preact" />
+    <noscript>L’espace admin a besoin de JavaScript pour fonctionner.</noscript>
+  </body>
+</html>

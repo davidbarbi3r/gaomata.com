@@ -1,18 +1,21 @@
 ---
 import { Image } from 'astro:assets';
-import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import BrandText from '../components/BrandText.astro';
+import Lines from '../components/Lines.astro';
 import PageHero from '../components/PageHero.astro';
 import portrait from '../assets/images/marion-portrait.jpeg';
 import duo from '../assets/images/marion-edwige.jpeg';
 import eventOne from '../assets/images/fly-evenement-1.jpeg';
 import eventTwo from '../assets/images/fly-evenement-3.jpeg';
+import { getContent } from '../cms/load';
 import { breadcrumbSchema } from '../data/seo';
-import { PARTNERSHIPS, SITE } from '../data/site';
+import { SITE } from '../data/site';
 
-const entry = await getEntry('pages', 'a-propos');
-if (!entry) throw new Error('Le contenu À propos est introuvable.');
-const { data } = entry;
+const content = await getContent();
+const { seo, hero, histoire, parcours, manifeste, partenariats, evenements } =
+  content.aPropos;
+const { contact } = content.commun;
 const schemas = [
   {
     '@context': 'https://schema.org',
@@ -34,21 +37,21 @@ const schemas = [
 ---
 
 <BaseLayout
-  title={data.title}
-  description={data.description}
+  title={seo.title}
+  description={seo.description}
   type="profile"
   {schemas}
 >
   <PageHero
-    eyebrow={data.eyebrow}
-    title={data.headline}
-    intro={data.intro}
+    eyebrow={hero.eyebrow}
+    title={hero.title}
+    intro={hero.intro}
     image={portrait}
-    alt="Marion Aubreton sourit devant un mur bleu intense"
+    alt={hero.imageAlt}
     tone="harbor"
   >
-    <a class="button button--light" href={data.ctaHref}>
-      {data.ctaLabel}
+    <a class="button button--light" href="/reserver">
+      {hero.ctaLabel}
       <span class="button__icon" aria-hidden="true">
         ↗
       </span>
@@ -57,12 +60,16 @@ const schemas = [
 
   <section class="section story">
     <div class="container story-grid">
-      <span class="story-year reveal">2013</span>
+      <span class="story-year reveal">{histoire.year}</span>
       <div class="story-copy reveal reveal-delay-1">
-        <span class="eyebrow">Le point de départ</span>
-        <h2>{data.sections.storyTitle}</h2>
-        <p class="lead">{data.sections.storyText}</p>
-        <p>{data.sections.storyExtra}</p>
+        <span class="eyebrow">{histoire.eyebrow}</span>
+        <h2>{histoire.title}</h2>
+        <p class="lead">
+          <Lines text={histoire.text} />
+        </p>
+        <p>
+          <Lines text={histoire.extra} />
+        </p>
       </div>
     </div>
   </section>
@@ -72,28 +79,27 @@ const schemas = [
       <div class="timeline-image reveal">
         <Image
           src={duo}
-          alt="Marion et Edwige marchent ensemble dans un lieu de retraite"
+          alt={parcours.imageAlt}
           widths={[540, 810, 1080]}
           sizes="(max-width: 832px) 100vw, 47vw"
           quality={86}
         />
-        <span>L’humain comme fil rouge</span>
+        <span>{parcours.imageCaption}</span>
       </div>
       <div class="timeline-content">
-        <div class="timeline-item reveal">
-          <span>2021</span>
-          <div>
-            <h2>{data.sections.trainingTitle}</h2>
-            <p>{data.sections.trainingText}</p>
+        {parcours.steps.map((step, index) => (
+          <div
+            class={`timeline-item reveal${index ? ` reveal-delay-${Math.min(index, 3)}` : ''}`}
+          >
+            <span>{step.year}</span>
+            <div>
+              <h2>{step.title}</h2>
+              <p>
+                <Lines text={step.text} />
+              </p>
+            </div>
           </div>
-        </div>
-        <div class="timeline-item reveal reveal-delay-1">
-          <span>2026</span>
-          <div>
-            <h2>{data.sections.nowTitle}</h2>
-            <p>{data.sections.nowText}</p>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   </section>
@@ -101,28 +107,31 @@ const schemas = [
   <section class="manifesto">
     <div class="container">
       <p class="reveal">
-        « Transmettre un maximum d’outils pour une meilleure connaissance de
-        soi. »
+        «&nbsp;
+        <Lines text={manifeste.quote} />
+        &nbsp;»
       </p>
       <p class="manifesto-wish reveal reveal-delay-1">
-        {data.sections.wishText}
+        <Lines text={manifeste.wish} />
       </p>
-      <span class="reveal reveal-delay-1">Marion · <span class="brand-name">Gao Mata</span></span>
+      <span class="reveal reveal-delay-1">
+        <BrandText text={manifeste.signature} />
+      </span>
     </div>
   </section>
 
   <section class="section partnerships" aria-labelledby="partners-title">
     <div class="container">
       <div class="partners-heading reveal">
-        <span class="eyebrow">Partenariats & événements</span>
-        <h2 id="partners-title">{data.sections.partnersTitle}</h2>
+        <span class="eyebrow">{partenariats.eyebrow}</span>
+        <h2 id="partners-title">{partenariats.title}</h2>
       </div>
       <div class="partners-layout">
         <div class="partners-images">
           <div class="partner-image partner-image--large reveal">
             <Image
               src={eventOne}
-              alt="Atelier collectif de yoga aérien lors d’un événement"
+              alt={partenariats.imageAlt1}
               widths={[480, 720, 960]}
               sizes="(max-width: 832px) 100vw, 40vw"
               quality={85}
@@ -131,7 +140,7 @@ const schemas = [
           <div class="partner-image partner-image--small reveal reveal-delay-1">
             <Image
               src={eventTwo}
-              alt="Moment de partage lors d’un événement Gao Mata"
+              alt={partenariats.imageAlt2}
               widths={[320, 560]}
               sizes="(max-width: 832px) 72vw, 22vw"
               quality={85}
@@ -139,12 +148,14 @@ const schemas = [
           </div>
         </div>
         <div class="partners-list">
-          {PARTNERSHIPS.map((partner, index) => (
+          {partenariats.items.map((partner, index) => (
             <article class={`reveal reveal-delay-${(index % 3) + 1}`}>
-              <span>0{index + 1}</span>
+              <span>{String(index + 1).padStart(2, '0')}</span>
               <div>
                 <h3>{partner.title}</h3>
-                <p>{partner.text}</p>
+                <p>
+                  <Lines text={partner.text} />
+                </p>
               </div>
             </article>
           ))}
@@ -155,18 +166,16 @@ const schemas = [
 
   <section class="section events-cta">
     <div class="narrow reveal">
-      <span class="eyebrow">Inventer un moment ensemble</span>
-      <h2>Anniversaire, EVJF, retraite ou projet de structure&nbsp;?</h2>
+      <span class="eyebrow">{evenements.eyebrow}</span>
+      <h2>{evenements.title}</h2>
       <p class="lead">
-        Je déplace mes hamacs, mes outils et mon grain de folie pour imaginer
-        des formats sur mesure avec les groupes, les familles et les
-        professionnels.
+        <Lines text={evenements.text} />
       </p>
       <a
         class="button"
-        href={`mailto:${SITE.email}?subject=Projet%20ou%20événement%20Gao%20Mata`}
+        href={`mailto:${contact.email}?subject=Projet%20ou%20événement%20Gao%20Mata`}
       >
-        Parler de mon projet
+        {evenements.buttonLabel}
         <span class="button__icon" aria-hidden="true">
           ↗
         </span>

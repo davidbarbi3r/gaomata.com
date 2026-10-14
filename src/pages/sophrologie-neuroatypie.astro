@@ -1,27 +1,35 @@
 ---
 import { Image } from 'astro:assets';
-import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BookingEmbed from '../components/BookingEmbed.astro';
+import Lines from '../components/Lines.astro';
 import PageHero from '../components/PageHero.astro';
 import PricingList from '../components/PricingList.astro';
 import sophroHero from '../assets/images/sophro.jpeg';
 import portrait from '../assets/images/marion-portrait.jpeg';
+import { toParagraphs } from '../cms/format';
+import { getContent } from '../cms/load';
 import { breadcrumbSchema, serviceSchema } from '../data/seo';
-import {
-  LOCATIONS,
-  SITE,
-  SOPHROLOGY_PRICES,
-  SOPHROLOGY_REASONS,
-} from '../data/site';
+import { SITE } from '../data/site';
 
-const entry = await getEntry('pages', 'sophrologie-neuroatypie');
-if (!entry) throw new Error('Le contenu Sophrologie est introuvable.');
-const { data } = entry;
+const content = await getContent();
+const {
+  seo,
+  hero,
+  definition,
+  raisons,
+  deroule,
+  neuro,
+  tarifs,
+  prestations,
+  rendezVous,
+  faq,
+} = content.sophro;
+const { contact, lieux } = content.commun;
 const schemas = [
   serviceSchema(
     'Sophrologie et accompagnement de la neuroatypie',
-    data.description,
+    seo.description,
     '/sophrologie-neuroatypie',
     'Séances de sophrologie',
   ),
@@ -32,17 +40,17 @@ const schemas = [
 ];
 ---
 
-<BaseLayout title={data.title} description={data.description} {schemas}>
+<BaseLayout title={seo.title} description={seo.description} {schemas}>
   <PageHero
-    eyebrow={data.eyebrow}
-    title={data.headline}
-    intro={data.intro}
+    eyebrow={hero.eyebrow}
+    title={hero.title}
+    intro={hero.intro}
     image={sophroHero}
-    alt="Marion dans un environnement naturel calme au bord de l’eau"
+    alt={hero.imageAlt}
     tone="olive"
   >
-    <a class="button button--light" href={data.ctaHref}>
-      {data.ctaLabel}
+    <a class="button button--light" href="#prestations">
+      {hero.ctaLabel}
       <span class="button__icon" aria-hidden="true">
         ↗
       </span>
@@ -52,14 +60,17 @@ const schemas = [
   <section class="section definition">
     <div class="container definition-grid">
       <div class="definition-title reveal">
-        <span class="eyebrow">Comprendre</span>
-        <h2>{data.sections.definitionTitle}</h2>
+        <span class="eyebrow">{definition.eyebrow}</span>
+        <h2>{definition.title}</h2>
       </div>
       <div class="definition-copy reveal reveal-delay-1">
-        <p class="lead">{data.sections.definitionText}</p>
+        <p class="lead">
+          <Lines text={definition.text} />
+        </p>
         <blockquote>
-          « Prendre conscience de ses capacités à traverser, s’ajuster et
-          retrouver un peu plus d’espace. »
+          «&nbsp;
+          <Lines text={definition.quote} />
+          &nbsp;»
         </blockquote>
       </div>
     </div>
@@ -68,14 +79,14 @@ const schemas = [
   <section class="section reasons" aria-labelledby="reasons-title">
     <div class="container reasons-grid">
       <div class="reasons-heading reveal">
-        <span class="eyebrow">Pour quoi venir ?</span>
-        <h2 id="reasons-title">{data.sections.reasonsTitle}</h2>
+        <span class="eyebrow">{raisons.eyebrow}</span>
+        <h2 id="reasons-title">{raisons.title}</h2>
       </div>
       <div class="reason-list">
-        {SOPHROLOGY_REASONS.map((reason, index) => (
+        {raisons.items.map((reason, index) => (
           <div class={`reason reveal reveal-delay-${(index % 3) + 1}`}>
-            <span>0{index + 1}</span>
-            <p>{reason}</p>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <p>{reason.text}</p>
           </div>
         ))}
       </div>
@@ -87,49 +98,35 @@ const schemas = [
       <div class="process-media reveal">
         <Image
           src={portrait}
-          alt="Marion Aubreton, praticienne en sophrologie"
+          alt={deroule.imageAlt}
           widths={[480, 720, 960]}
           sizes="(max-width: 832px) 100vw, 42vw"
           quality={85}
         />
-        <span class="process-label">Écouter avant de proposer</span>
+        <span class="process-label">{deroule.imageLabel}</span>
       </div>
       <div class="process-copy">
         <div class="reveal">
-          <span class="eyebrow">Le déroulé</span>
-          <h2>{data.sections.processTitle}</h2>
-          <p>{data.sections.processText}</p>
+          <span class="eyebrow">{deroule.eyebrow}</span>
+          <h2>{deroule.title}</h2>
+          <p>
+            <Lines text={deroule.text} />
+          </p>
         </div>
         <div class="process-steps">
-          <article class="reveal">
-            <span>01</span>
-            <div>
-              <h3>Échanger</h3>
-              <p>
-                Poser le besoin, les ressentis et ce qui est possible
-                aujourd’hui.
-              </p>
-            </div>
-          </article>
-          <article class="reveal reveal-delay-1">
-            <span>02</span>
-            <div>
-              <h3>Expérimenter</h3>
-              <p>
-                Mouvement, respiration et visualisation s’ajustent à la séance.
-              </p>
-            </div>
-          </article>
-          <article class="reveal reveal-delay-2">
-            <span>03</span>
-            <div>
-              <h3>Intégrer</h3>
-              <p>
-                Mettre des mots et repartir avec des outils réutilisables au
-                quotidien.
-              </p>
-            </div>
-          </article>
+          {deroule.steps.map((step, index) => (
+            <article
+              class={`reveal${index ? ` reveal-delay-${Math.min(index, 3)}` : ''}`}
+            >
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{step.title}</h3>
+                <p>
+                  <Lines text={step.text} />
+                </p>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </div>
@@ -138,17 +135,20 @@ const schemas = [
   <section class="section neuro">
     <div class="container neuro-grid">
       <div class="neuro-heading reveal">
-        <span class="eyebrow">TND · TDAH · TSA · DYS · HPI</span>
-        <h2>{data.sections.neuroTitle}</h2>
+        <span class="eyebrow">{neuro.eyebrow}</span>
+        <h2>{neuro.title}</h2>
       </div>
       <div class="neuro-copy reveal reveal-delay-1">
-        <p class="lead">{data.sections.neuroText}</p>
-        <p class="boundary">{data.sections.boundaryText}</p>
+        <p class="lead">
+          <Lines text={neuro.text} />
+        </p>
+        <p class="boundary">
+          <Lines text={neuro.boundary} />
+        </p>
         <div class="neuro-tags" aria-label="Principes de l’accompagnement">
-          <span>Décoder</span>
-          <span>Réguler</span>
-          <span>Adapter</span>
-          <span>Soutenir</span>
+          {neuro.tags.map((tag) => (
+            <span>{tag.text}</span>
+          ))}
         </div>
       </div>
     </div>
@@ -157,18 +157,17 @@ const schemas = [
   <section class="section sophro-prices">
     <div class="container price-layout">
       <div class="price-copy reveal">
-        <span class="eyebrow">Accompagnement individuel</span>
-        <h2>{data.sections.pricesTitle}</h2>
+        <span class="eyebrow">{tarifs.eyebrow}</span>
+        <h2>{tarifs.title}</h2>
         <p>
-          Certaines complémentaires santé prennent en charge la sophrologie.
-          Le plus simple, c’est de leur en faire la demande.
+          <Lines text={tarifs.text} />
         </p>
       </div>
       <div class="reveal reveal-delay-1">
         <PricingList
-          title="Séances de sophrologie"
-          items={SOPHROLOGY_PRICES.map((item) => ({ ...item }))}
-          note="Premier rendez-vous uniquement par email"
+          title={tarifs.listTitle}
+          items={tarifs.items}
+          note={tarifs.listNote}
         />
       </div>
     </div>
@@ -178,10 +177,10 @@ const schemas = [
     <div class="container reveal">
       <BookingEmbed
         id="reservation-sophrologie"
-        title="Choisir une prestation"
-        description="Retrouve les accompagnements en sophrologie et les créneaux proposés sur Aurarios."
+        title={prestations.title}
+        description={prestations.description}
         embedUrl={SITE.sophrologyEmbed}
-        profileUrl={SITE.bookingProfile}
+        profileUrl={contact.bookingProfile}
         buttonLabel="Afficher les prestations"
         tone="olive"
         autoLoad
@@ -193,21 +192,25 @@ const schemas = [
   <section class="section appointments">
     <div class="container appointments-grid">
       <div class="appointment-heading reveal">
-        <span class="eyebrow">Où se rencontrer ?</span>
-        <h2>Deux lieux, le même cadre attentif.</h2>
+        <span class="eyebrow">{rendezVous.eyebrow}</span>
+        <h2>{rendezVous.title}</h2>
       </div>
       <div class="appointment-list">
-        {LOCATIONS.map((location, index) => (
-          <article class={`appointment reveal reveal-delay-${index + 1}`}>
+        {lieux.items.map((location, index) => (
+          <article class={`appointment reveal reveal-delay-${(index % 3) + 1}`}>
             <span>{location.city}</span>
             <h3>{location.name}</h3>
-            <p>{location.detail}</p>
+            <p>
+              <Lines text={location.detail} />
+            </p>
           </article>
         ))}
         <div class="appointment-cta reveal">
-          <p>Pour une première séance, échangeons d’abord par email.</p>
-          <a class="button button--light" href={`mailto:${SITE.email}`}>
-            M’écrire
+          <p>
+            <Lines text={rendezVous.ctaText} />
+          </p>
+          <a class="button button--light" href={`mailto:${contact.email}`}>
+            {rendezVous.ctaButton}
             <span class="button__icon" aria-hidden="true">
               ↗
             </span>
@@ -220,16 +223,20 @@ const schemas = [
   <section class="section faq">
     <div class="narrow">
       <div class="faq-heading reveal">
-        <span class="eyebrow">Questions fréquentes</span>
-        <h2>Avant une première séance.</h2>
+        <span class="eyebrow">{faq.eyebrow}</span>
+        <h2>{faq.title}</h2>
       </div>
-      {data.faqs.map((faq, index) => (
+      {faq.items.map((item, index) => (
         <details class="reveal">
           <summary>
-            <span>0{index + 1}</span>
-            {faq.question}
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            {item.question}
           </summary>
-          <p>{faq.answer}</p>
+          {toParagraphs(item.answer).map((paragraph) => (
+            <p>
+              <Lines text={paragraph} />
+            </p>
+          ))}
         </details>
       ))}
     </div>
