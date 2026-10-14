@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.gaomata.com/sitemap-index.xml
+Sitemap: https://www.gaomata.fr/sitemap-index.xml

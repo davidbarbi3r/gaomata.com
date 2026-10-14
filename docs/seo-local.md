@@ -51,7 +51,7 @@ Manque pour Maps : adresse, fiche Google, carte. `LOCATIONS` écrit « Éloïse 
 | P1 | Élevé | Géographie | Le site dit « Boisseuil » alors que Le Chat qui Médite est au 5 allée du Château, 87260 Saint-Hilaire-Bonneval. | Écrire « Saint-Hilaire-Bonneval, à la lisière de Boisseuil » partout : contenu, schema, GBP, footer. |
 | P1 | Élevé | NAP visible | Footer = villes + tél + mail. Mentions légales sans adresse. Pas de carte, pas d’accès, pas d’horaires structurés. | Bloc NAP complet sur chaque page (footer) + page Lieux avec carte, parking, bus, jours par site. |
 | P1 | Élevé | Citations | PlaySport a le téléphone +61 06 09 05 00 01, une fausse catégorie « centre de retraite », et l’ancienne adresse. Bottin.fr idem. | Corriger ou supprimer ces fiches. Ajouter Instagram, Facebook et LinkedIn dans sameAs. |
-| P1 | Élevé | Migration URL | Live : `/fly-yoga`, `/sophrotherapie`, Eversports, pas de canonical ni sitemap. `gaomata.fr` répond 500. | 301 `/fly-yoga` → `/fly-yoga-souplesse`, `/sophrotherapie` → `/sophrologie-neuroatypie`. Rediriger `.fr` → `.com`. Soumettre le sitemap. |
+| P1 | Élevé | Migration URL | Live : `/fly-yoga`, `/sophrotherapie`, Eversports, pas de canonical ni sitemap. `gaomata.fr` répond 500. | 301 `/fly-yoga` → `/fly-yoga-souplesse`, `/sophrotherapie` → `/sophrologie-neuroatypie`. Rediriger `gaomata.com` et `gaomata.fr` → `www.gaomata.fr`. Soumettre le sitemap. |
 | P2 | Moyen | Pages lieux | Une section accueil trop mince. Pas de page par lieu. | Page `/lieux`, puis renforcer les deux pages offres avec un bloc lieu unique (pas de doorway pages vides). |
 | P2 | Moyen | On-page | Titres du nouveau site sont bons. Les H1 restent poétiques, sans ville. Live : titre identique sur toutes les pages, 2 H1. | Garder les titles géolocalisés. Glisser la ville dans le H1 ou le premier paragraphe visible. |
 | P2 | Moyen | Schema secondaire | FAQ visibles sans FAQPage. Tarifs sans Offer. sameAs = seulement Aurarios. Typo « Krampt ». | FAQPage + Offer. sameAs vers Insta / FB / LinkedIn / GBP. Corriger Eloïse Kramp. |
@@ -62,7 +62,7 @@ Manque pour Maps : adresse, fiche Google, carte. `LOCATIONS` écrit « Éloïse 
 
 1. **Cette semaine — geler le NAP canonique.** Décider le lieu principal GBP, l’adresse exacte SHB, et le libellé Boisseuil vs Saint-Hilaire-Bonneval.
 2. **Avant mise en ligne — schema + footer + mentions.** address, geo, image, logo, horaires, priceRange, sameAs, FAQPage. Corriger Kramp.
-3. **Jour J — 301 + Search Console.** Anciennes URLs, `gaomata.fr` → `www.gaomata.com`, soumettre `sitemap-index.xml`.
+3. **Jour J — 301 + Search Console.** Anciennes URLs, `gaomata.com` et `gaomata.fr` → `www.gaomata.fr`, soumettre `sitemap-index.xml`.
 4. **Jour J + 1 — fiche Google.** Catégories : studio de yoga + sophrologue. Services, zones (87), photos, lien du site, planning.
 5. **Semaine 2 — nettoyer les citations.** PlaySport, Bottin, PagesJaunes, Apple Maps, Bing Places. Sortir Gao Mata de l’adresse Noriac. Rien à demander à Mudita.
 6. **Semaine 2 — page Lieux.** Deux fiches : accès, parking, jours, ce qui s’y pratique. Carte + itinéraire. Lien depuis le footer.

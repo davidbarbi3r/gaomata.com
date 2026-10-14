@@ -1,7 +1,7 @@
 export const SITE = {
   name: 'Gao Mata',
   owner: 'Marion Aubreton',
-  url: 'https://www.gaomata.com',
+  url: 'https://www.gaomata.fr',
   email: 'gao.mata87@gmail.com',
   phoneDisplay: '06 09 05 00 01',
   phoneHref: 'tel:+33609050001',
