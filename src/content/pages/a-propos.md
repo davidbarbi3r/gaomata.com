@@ -1,7 +1,7 @@
 ---
 title: 'Marion Aubreton, dite Gao Mata'
 description: 'Moi, c’est Marion. Pédagogue peu conventionnelle, au service de l’atypique. Fly Yoga, souplesse et sophrologie à Boisseuil et Limoges.'
-eyebrow: 'Moi, c’est Marion, dite Gao Mata'
+eyebrow: 'Moi, c’est Marion Aubreton, dite Gao Mata'
 headline: 'Pédagogue peu conventionnelle, au service de l’atypique.'
 intro: 'Je t’embarque avec moi. Peut-être as-tu déjà croisé ma route au détour d’une virée aérienne, d’un moment d’exploration corporelle, ou par le biais de la sophrologie ? Ou attends-tu simplement le bon moment, l’élan, pour venir à ma rencontre ? Alors tu es au bon endroit.'
 ctaLabel: 'Découvrir une séance'

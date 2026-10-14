@@ -20,14 +20,16 @@ const eyebrowParts = eyebrow.split(SITE.name);
   <div class="container page-hero__grid">
     <div class="page-hero__copy">
       <span class="eyebrow">
-        {eyebrowParts.map((part, index) => (
-          <>
-            {part}
-            {index < eyebrowParts.length - 1 && (
-              <span class="brand-name">{SITE.name}</span>
-            )}
-          </>
-        ))}
+        <span>
+          {eyebrowParts.map((part, index) => (
+            <>
+              {part}
+              {index < eyebrowParts.length - 1 && (
+                <span class="brand-name">{SITE.name}</span>
+              )}
+            </>
+          ))}
+        </span>
       </span>
       <h1>{title}</h1>
       <p>{intro}</p>
